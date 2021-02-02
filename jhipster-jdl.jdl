@@ -1,0 +1,174 @@
+// Application settings
+application {
+  config {
+    baseName 					openfitnesstracker,
+    applicationType 			monolith,
+    packageName 				org.sm0x.openfitnesstracker,
+    authenticationType 			jwt,
+    buildTool					maven,
+    cacheProvider				no,
+    clientPackageManager		npm,
+    clientTheme                 flatly,
+    clientThemeVariant			primary,
+    languages					[en, de]
+    prodDatabaseType 			postgresql,
+    clientFramework 			react
+  }
+  entities *
+}
+
+entity ApplicationSettings { 
+	defaultTheme				String,
+	defaultWarmupTime			Duration,
+    defaultPreWorkoutTime		Duration,
+    defaultSetCount				Integer,
+}
+
+entity UserSettings {
+	selectedTheme				String,
+	defaultWarmupTime			Duration,
+    defaultPreWorkoutTime		Duration,
+    defaultSetCount				Integer
+}
+
+enum DayOfWeek {
+	MONDAY,
+    TUESDAY,
+    WEDNESDAY,
+    THURSDAY,
+    FRIDAY,
+    SATURDAY,
+    SUNDAY
+}
+
+relationship OneToOne {
+  UserSettings{user}							to				User,
+  TargetWeight{weight}					        to              Weight{targetWeight},
+  ProtocolledWeight{weight}                     to              Weight{protocolledWeight},
+  CompletedSet{weight}                     		to              Weight{completedSet}
+}
+
+relationship OneToMany {
+  CompletedTraining{completedSet}				to				CompletedSet{completedTrainings},
+  TrainingUnit{completedTraining}               to              CompletedTraining{trainingUnits},
+  Workout{completedSet}                         to              CompletedSet{workouts},
+  
+  Language{UserSettings}                		to              UserSettings{selectedLanguage},
+  Language{trainingSchedules}                    to             TrainingSchedule{language},
+  Language{trainingUnits}                       to              TrainingUnit{language},
+  Language{workouts}                            to              Workout{language},
+  Language{units}                               to              Unit{language},
+  Language{medias}                              to              Media{language},
+  
+  Unit{weight}                                  to              Weight{units},
+}
+
+relationship ManyToOne {  
+  TrainingSchedule{user}						to              User,				
+  TrainingUnit{user}							to				User,
+  Workout{user}									to				User,
+  CompletedTraining{user}						to				User,
+  CompletedSet{user}							to				User,
+  Nutrition{user}								to				User,
+  TargetWeight{user}							to				User,
+  ProtocolledWeight{user}						to				User,
+  Media{user}									to				User,
+}
+
+relationship ManyToMany { 
+	TrainingSchedule{trainingUnits} 			to 				TrainingUnit{trainingSchedules},
+    TrainingUnit{workouts} 						to 				Workout{trainingUnits},
+	Media{trainingUnits} 						to 				TrainingUnit{medias},
+    Media{workouts} 							to 				Workout{medias},
+}
+
+// Workout tracking
+
+/**
+ * Training schedule of a training. The User creates here 
+ * a training schedule, for example 3 split push pull leg.
+ * Monday: Push
+ * Wendsday: Pull
+ * Friday: Leg
+ */ 
+entity TrainingSchedule {
+	name 					String,
+    startDate				ZonedDateTime,
+    endDate					ZonedDateTime
+}
+
+entity TrainingUnit {
+	name 					String,
+	dayOfWeek 				DayOfWeek,
+    time                    String,
+    pauseTime				Duration,
+    warumupTime				Duration,
+    preworkoutCountdownTime Duration,
+}
+
+entity Workout {
+	name					String,
+    sets					Integer
+}
+
+entity CompletedTraining {
+	startDate 				ZonedDateTime,
+    endDate 				ZonedDateTime
+}
+
+entity CompletedSet {
+	set						Integer,
+	repetitions				Integer,
+}
+
+// Nutrition tracking
+entity Nutrition {
+	time					ZonedDateTime,
+	carbs					BigDecimal,
+    fat						BigDecimal,
+    protein					BigDecimal,
+    fiber					BigDecimal,
+    kcal					BigDecimal
+}
+
+// Weight tracking
+
+/** Defines the targed weight a user will archieve.
+*   param startDate: The DateTime a user will start his/her goal
+*   param endDate: The DateTime a user will archieve his/her goal
+*/
+entity TargetWeight {
+	startDate				ZonedDateTime,
+	endDate					ZonedDateTime,
+}
+
+/** Defines the daily protcolled weight a user has to an specific point in time.
+*   param time: The point in time the user measures his/her weight.
+*/
+entity ProtocolledWeight {
+	time					ZonedDateTime,		
+}
+
+/** A general object which defines a weight.
+*** amount: The amount of a specific unit
+**/
+entity Weight {
+    amount                  BigDecimal,
+}
+
+entity Unit {
+	name					String,
+    shortName				String
+}
+
+entity Media {
+	name					String,
+    kind					String,
+    binaryData				Blob,
+    additionalInformation	String
+}
+
+entity Language {
+    name                    String,
+    shortName               String
+}
