@@ -1,0 +1,28 @@
+{
+  "openfitnesstrackerApp": {
+    "nutrition": {
+      "home": {
+        "title": "Nutritions",
+        "createLabel": "Nutrition erstellen",
+        "createOrEditLabel": "Nutrition erstellen oder bearbeiten",
+        "notFound": "No Nutritions found"
+      },
+      "created": "Nutrition erstellt mit ID {{ param }}",
+      "updated": "Nutrition aktualisiert mit ID {{ param }}",
+      "deleted": "Nutrition gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Nutrition {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Nutrition"
+      },
+      "time": "Time",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "protein": "Protein",
+      "fiber": "Fiber",
+      "kcal": "Kcal",
+      "user": "User"
+    }
+  }
+}

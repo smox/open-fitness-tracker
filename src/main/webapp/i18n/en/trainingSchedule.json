@@ -1,0 +1,27 @@
+{
+  "openfitnesstrackerApp": {
+    "trainingSchedule": {
+      "home": {
+        "title": "Training Schedules",
+        "createLabel": "Create a new Training Schedule",
+        "createOrEditLabel": "Create or edit a Training Schedule",
+        "notFound": "No Training Schedules found"
+      },
+      "created": "A new Training Schedule is created with identifier {{ param }}",
+      "updated": "A Training Schedule is updated with identifier {{ param }}",
+      "deleted": "A Training Schedule is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Training Schedule {{ id }}?"
+      },
+      "detail": {
+        "title": "Training Schedule"
+      },
+      "name": "Name",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "user": "User",
+      "trainingUnits": "Training Units",
+      "language": "Language"
+    }
+  }
+}

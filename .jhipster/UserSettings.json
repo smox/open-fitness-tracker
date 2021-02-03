@@ -1,0 +1,49 @@
+{
+  "name": "UserSettings",
+  "fields": [
+    {
+      "fieldName": "selectedTheme",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "defaultWarmupTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "defaultPreWorkoutTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "defaultSetCount",
+      "fieldType": "Integer"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "userSettings",
+      "relationshipName": "user",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "language",
+      "otherEntityRelationshipName": "userSettings",
+      "relationshipName": "selectedLanguage",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203150655",
+  "entityTableName": "user_settings",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

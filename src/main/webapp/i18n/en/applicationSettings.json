@@ -1,0 +1,25 @@
+{
+  "openfitnesstrackerApp": {
+    "applicationSettings": {
+      "home": {
+        "title": "Application Settings",
+        "createLabel": "Create a new Application Settings",
+        "createOrEditLabel": "Create or edit a Application Settings",
+        "notFound": "No Application Settings found"
+      },
+      "created": "A new Application Settings is created with identifier {{ param }}",
+      "updated": "A Application Settings is updated with identifier {{ param }}",
+      "deleted": "A Application Settings is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Application Settings {{ id }}?"
+      },
+      "detail": {
+        "title": "Application Settings"
+      },
+      "defaultTheme": "Default Theme",
+      "defaultWarmupTime": "Default Warmup Time",
+      "defaultPreWorkoutTime": "Default Pre Workout Time",
+      "defaultSetCount": "Default Set Count"
+    }
+  }
+}

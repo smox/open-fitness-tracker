@@ -1,0 +1,62 @@
+{
+  "name": "Language",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "shortName",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "userSettings",
+      "otherEntityRelationshipName": "selectedLanguage",
+      "relationshipName": "userSettings"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "trainingSchedule",
+      "otherEntityRelationshipName": "language",
+      "relationshipName": "trainingSchedules"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "trainingUnit",
+      "otherEntityRelationshipName": "language",
+      "relationshipName": "trainingUnits"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "workout",
+      "otherEntityRelationshipName": "language",
+      "relationshipName": "workouts"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "unit",
+      "otherEntityRelationshipName": "language",
+      "relationshipName": "units"
+    },
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "media",
+      "otherEntityRelationshipName": "language",
+      "relationshipName": "medias"
+    }
+  ],
+  "changelogDate": "20210203151855",
+  "entityTableName": "language",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

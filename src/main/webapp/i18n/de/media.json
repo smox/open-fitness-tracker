@@ -1,0 +1,29 @@
+{
+  "openfitnesstrackerApp": {
+    "media": {
+      "home": {
+        "title": "Media",
+        "createLabel": "Media erstellen",
+        "createOrEditLabel": "Media erstellen oder bearbeiten",
+        "notFound": "No Media found"
+      },
+      "created": "Media erstellt mit ID {{ param }}",
+      "updated": "Media aktualisiert mit ID {{ param }}",
+      "deleted": "Media gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Media {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Media"
+      },
+      "name": "Name",
+      "kind": "Kind",
+      "binaryData": "Binary Data",
+      "additionalInformation": "Additional Information",
+      "user": "User",
+      "trainingUnits": "Training Units",
+      "workouts": "Workouts",
+      "language": "Language"
+    }
+  }
+}

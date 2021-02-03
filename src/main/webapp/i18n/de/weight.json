@@ -1,0 +1,26 @@
+{
+  "openfitnesstrackerApp": {
+    "weight": {
+      "home": {
+        "title": "Weights",
+        "createLabel": "Weight erstellen",
+        "createOrEditLabel": "Weight erstellen oder bearbeiten",
+        "notFound": "No Weights found"
+      },
+      "created": "Weight erstellt mit ID {{ param }}",
+      "updated": "Weight aktualisiert mit ID {{ param }}",
+      "deleted": "Weight gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Weight {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Weight"
+      },
+      "amount": "Amount",
+      "targetWeight": "Target Weight",
+      "protocolledWeight": "Protocolled Weight",
+      "completedSet": "Completed Set",
+      "units": "Units"
+    }
+  }
+}

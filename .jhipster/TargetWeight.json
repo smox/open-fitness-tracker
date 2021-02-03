@@ -1,0 +1,42 @@
+{
+  "name": "TargetWeight",
+  "fields": [
+    {
+      "fieldName": "startDate",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "weight",
+      "otherEntityRelationshipName": "targetWeight",
+      "relationshipName": "weight",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "targetWeight",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151355",
+  "javadoc": "Defines the targed weight a user will archieve.\\nparam startDate: The DateTime a user will start his/her goal\\nparam endDate: The DateTime a user will archieve his/her goal",
+  "entityTableName": "target_weight",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

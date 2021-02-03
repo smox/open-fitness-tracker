@@ -1,0 +1,29 @@
+{
+  "openfitnesstrackerApp": {
+    "language": {
+      "home": {
+        "title": "Languages",
+        "createLabel": "Language erstellen",
+        "createOrEditLabel": "Language erstellen oder bearbeiten",
+        "notFound": "No Languages found"
+      },
+      "created": "Language erstellt mit ID {{ param }}",
+      "updated": "Language aktualisiert mit ID {{ param }}",
+      "deleted": "Language gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Language {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Language"
+      },
+      "name": "Name",
+      "shortName": "Short Name",
+      "userSettings": "User Settings",
+      "trainingSchedules": "Training Schedules",
+      "trainingUnits": "Training Units",
+      "workouts": "Workouts",
+      "units": "Units",
+      "medias": "Medias"
+    }
+  }
+}

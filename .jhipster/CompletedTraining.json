@@ -1,0 +1,46 @@
+{
+  "name": "CompletedTraining",
+  "fields": [
+    {
+      "fieldName": "startDate",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "completedSet",
+      "otherEntityRelationshipName": "completedTrainings",
+      "relationshipName": "completedSet"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "completedTraining",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "trainingUnit",
+      "otherEntityRelationshipName": "completedTraining",
+      "relationshipName": "trainingUnits",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151055",
+  "entityTableName": "completed_training",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

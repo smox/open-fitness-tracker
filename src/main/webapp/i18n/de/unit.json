@@ -1,0 +1,25 @@
+{
+  "openfitnesstrackerApp": {
+    "unit": {
+      "home": {
+        "title": "Units",
+        "createLabel": "Unit erstellen",
+        "createOrEditLabel": "Unit erstellen oder bearbeiten",
+        "notFound": "No Units found"
+      },
+      "created": "Unit erstellt mit ID {{ param }}",
+      "updated": "Unit aktualisiert mit ID {{ param }}",
+      "deleted": "Unit gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Unit {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Unit"
+      },
+      "name": "Name",
+      "shortName": "Short Name",
+      "weight": "Weight",
+      "language": "Language"
+    }
+  }
+}

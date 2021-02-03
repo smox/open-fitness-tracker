@@ -1,0 +1,25 @@
+{
+  "openfitnesstrackerApp": {
+    "applicationSettings": {
+      "home": {
+        "title": "Application Settings",
+        "createLabel": "Application Settings erstellen",
+        "createOrEditLabel": "Application Settings erstellen oder bearbeiten",
+        "notFound": "No Application Settings found"
+      },
+      "created": "Application Settings erstellt mit ID {{ param }}",
+      "updated": "Application Settings aktualisiert mit ID {{ param }}",
+      "deleted": "Application Settings gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Application Settings {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Application Settings"
+      },
+      "defaultTheme": "Default Theme",
+      "defaultWarmupTime": "Default Warmup Time",
+      "defaultPreWorkoutTime": "Default Pre Workout Time",
+      "defaultSetCount": "Default Set Count"
+    }
+  }
+}

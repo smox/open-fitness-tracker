@@ -1,0 +1,49 @@
+{
+  "name": "Nutrition",
+  "fields": [
+    {
+      "fieldName": "time",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "carbs",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "fat",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "protein",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "fiber",
+      "fieldType": "BigDecimal"
+    },
+    {
+      "fieldName": "kcal",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "nutrition",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151255",
+  "entityTableName": "nutrition",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

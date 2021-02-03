@@ -1,0 +1,33 @@
+{
+  "name": "ApplicationSettings",
+  "fields": [
+    {
+      "fieldName": "defaultTheme",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "defaultWarmupTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "defaultPreWorkoutTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "defaultSetCount",
+      "fieldType": "Integer"
+    }
+  ],
+  "relationships": [],
+  "changelogDate": "20210203150555",
+  "entityTableName": "application_settings",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

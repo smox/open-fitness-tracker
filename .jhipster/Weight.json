@@ -1,0 +1,51 @@
+{
+  "name": "Weight",
+  "fields": [
+    {
+      "fieldName": "amount",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "targetWeight",
+      "otherEntityRelationshipName": "weight",
+      "relationshipName": "targetWeight",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "protocolledWeight",
+      "otherEntityRelationshipName": "weight",
+      "relationshipName": "protocolledWeight",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "completedSet",
+      "otherEntityRelationshipName": "weight",
+      "relationshipName": "completedSet",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "unit",
+      "otherEntityRelationshipName": "weight",
+      "relationshipName": "units",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151555",
+  "javadoc": "A general object which defines a weight.\\namount: The amount of a specific unit",
+  "entityTableName": "weight",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.9.xsd">
+    <!--
+        Added the constraints for entity TrainingSchedule.
+    -->
+    <changeSet id="20210203150755-2" author="jhipster">
+        
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="training_schedule"
+                                 constraintName="fk_training_schedule_user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
+
+        <addForeignKeyConstraint baseColumnNames="training_schedule_id"
+                                 baseTableName="training_schedule_training_units"
+                                 constraintName="fk_training_schedule_training_units_training_schedule_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="training_schedule"/>
+
+        <addForeignKeyConstraint baseColumnNames="training_units_id"
+                                 baseTableName="training_schedule_training_units"
+                                 constraintName="fk_training_schedule_training_units_training_units_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="training_unit"/>
+        
+        <addForeignKeyConstraint baseColumnNames="language_id"
+                                 baseTableName="training_schedule"
+                                 constraintName="fk_training_schedule_language_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="language"/>
+
+    </changeSet>
+</databaseChangeLog>

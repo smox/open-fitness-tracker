@@ -1,0 +1,38 @@
+{
+  "name": "ProtocolledWeight",
+  "fields": [
+    {
+      "fieldName": "time",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "weight",
+      "otherEntityRelationshipName": "protocolledWeight",
+      "relationshipName": "weight",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "protocolledWeight",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151455",
+  "javadoc": "Defines the daily protcolled weight a user has to an specific point in time.\\nparam time: The point in time the user measures his/her weight.",
+  "entityTableName": "protocolled_weight",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

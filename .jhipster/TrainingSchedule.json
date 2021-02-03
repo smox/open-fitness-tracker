@@ -1,0 +1,53 @@
+{
+  "name": "TrainingSchedule",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "ZonedDateTime"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "ZonedDateTime"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "trainingSchedule",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "trainingUnit",
+      "otherEntityRelationshipName": "trainingSchedules",
+      "relationshipName": "trainingUnits",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "language",
+      "otherEntityRelationshipName": "trainingSchedules",
+      "relationshipName": "language",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203150755",
+  "javadoc": "Training schedule of a training. The User creates here\\na training schedule, for example 3 split push pull leg.\\nMonday: Push\\nWendsday: Pull\\nFriday: Leg",
+  "entityTableName": "training_schedule",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

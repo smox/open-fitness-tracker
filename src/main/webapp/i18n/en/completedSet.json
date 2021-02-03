@@ -1,0 +1,27 @@
+{
+  "openfitnesstrackerApp": {
+    "completedSet": {
+      "home": {
+        "title": "Completed Sets",
+        "createLabel": "Create a new Completed Set",
+        "createOrEditLabel": "Create or edit a Completed Set",
+        "notFound": "No Completed Sets found"
+      },
+      "created": "A new Completed Set is created with identifier {{ param }}",
+      "updated": "A Completed Set is updated with identifier {{ param }}",
+      "deleted": "A Completed Set is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Completed Set {{ id }}?"
+      },
+      "detail": {
+        "title": "Completed Set"
+      },
+      "set": "Set",
+      "repetitions": "Repetitions",
+      "weight": "Weight",
+      "user": "User",
+      "completedTrainings": "Completed Trainings",
+      "workouts": "Workouts"
+    }
+  }
+}

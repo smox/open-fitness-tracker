@@ -1,0 +1,39 @@
+{
+  "name": "Unit",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "shortName",
+      "fieldType": "String"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "weight",
+      "otherEntityRelationshipName": "units",
+      "relationshipName": "weight"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "language",
+      "otherEntityRelationshipName": "units",
+      "relationshipName": "language",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151655",
+  "entityTableName": "unit",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

@@ -1,0 +1,55 @@
+{
+  "name": "CompletedSet",
+  "fields": [
+    {
+      "fieldName": "set",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "repetitions",
+      "fieldType": "Integer"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-one",
+      "otherEntityName": "weight",
+      "otherEntityRelationshipName": "completedSet",
+      "relationshipName": "weight",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "completedSet",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "completedTraining",
+      "otherEntityRelationshipName": "completedSet",
+      "relationshipName": "completedTrainings",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "workout",
+      "otherEntityRelationshipName": "completedSet",
+      "relationshipName": "workouts",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20210203151155",
+  "entityTableName": "completed_set",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

@@ -1,0 +1,33 @@
+{
+  "openfitnesstrackerApp": {
+    "trainingUnit": {
+      "home": {
+        "title": "Training Units",
+        "createLabel": "Create a new Training Unit",
+        "createOrEditLabel": "Create or edit a Training Unit",
+        "notFound": "No Training Units found"
+      },
+      "created": "A new Training Unit is created with identifier {{ param }}",
+      "updated": "A Training Unit is updated with identifier {{ param }}",
+      "deleted": "A Training Unit is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Training Unit {{ id }}?"
+      },
+      "detail": {
+        "title": "Training Unit"
+      },
+      "name": "Name",
+      "dayOfWeek": "Day Of Week",
+      "time": "Time",
+      "pauseTime": "Pause Time",
+      "warumupTime": "Warumup Time",
+      "preworkoutCountdownTime": "Preworkout Countdown Time",
+      "completedTraining": "Completed Training",
+      "user": "User",
+      "workouts": "Workouts",
+      "language": "Language",
+      "trainingSchedules": "Training Schedules",
+      "medias": "Medias"
+    }
+  }
+}

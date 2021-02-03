@@ -1,0 +1,24 @@
+{
+  "openfitnesstrackerApp": {
+    "protocolledWeight": {
+      "home": {
+        "title": "Protocolled Weights",
+        "createLabel": "Protocolled Weight erstellen",
+        "createOrEditLabel": "Protocolled Weight erstellen oder bearbeiten",
+        "notFound": "No Protocolled Weights found"
+      },
+      "created": "Protocolled Weight erstellt mit ID {{ param }}",
+      "updated": "Protocolled Weight aktualisiert mit ID {{ param }}",
+      "deleted": "Protocolled Weight gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Protocolled Weight {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Protocolled Weight"
+      },
+      "time": "Time",
+      "weight": "Weight",
+      "user": "User"
+    }
+  }
+}

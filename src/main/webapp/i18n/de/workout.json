@@ -1,0 +1,28 @@
+{
+  "openfitnesstrackerApp": {
+    "workout": {
+      "home": {
+        "title": "Workouts",
+        "createLabel": "Workout erstellen",
+        "createOrEditLabel": "Workout erstellen oder bearbeiten",
+        "notFound": "No Workouts found"
+      },
+      "created": "Workout erstellt mit ID {{ param }}",
+      "updated": "Workout aktualisiert mit ID {{ param }}",
+      "deleted": "Workout gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Workout {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Workout"
+      },
+      "name": "Name",
+      "sets": "Sets",
+      "completedSet": "Completed Set",
+      "user": "User",
+      "language": "Language",
+      "trainingUnits": "Training Units",
+      "medias": "Medias"
+    }
+  }
+}

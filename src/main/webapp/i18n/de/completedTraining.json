@@ -1,0 +1,26 @@
+{
+  "openfitnesstrackerApp": {
+    "completedTraining": {
+      "home": {
+        "title": "Completed Trainings",
+        "createLabel": "Completed Training erstellen",
+        "createOrEditLabel": "Completed Training erstellen oder bearbeiten",
+        "notFound": "No Completed Trainings found"
+      },
+      "created": "Completed Training erstellt mit ID {{ param }}",
+      "updated": "Completed Training aktualisiert mit ID {{ param }}",
+      "deleted": "Completed Training gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Completed Training {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Completed Training"
+      },
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "completedSet": "Completed Set",
+      "user": "User",
+      "trainingUnits": "Training Units"
+    }
+  }
+}

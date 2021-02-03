@@ -1,0 +1,87 @@
+{
+  "name": "TrainingUnit",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dayOfWeek",
+      "fieldType": "DayOfWeek",
+      "fieldValues": "MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY,SUNDAY"
+    },
+    {
+      "fieldName": "time",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "pauseTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "warumupTime",
+      "fieldType": "Duration"
+    },
+    {
+      "fieldName": "preworkoutCountdownTime",
+      "fieldType": "Duration"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "one-to-many",
+      "otherEntityName": "completedTraining",
+      "otherEntityRelationshipName": "trainingUnits",
+      "relationshipName": "completedTraining"
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "trainingUnit",
+      "relationshipName": "user",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "workout",
+      "otherEntityRelationshipName": "trainingUnits",
+      "relationshipName": "workouts",
+      "otherEntityField": "id",
+      "ownerSide": true
+    },
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "language",
+      "otherEntityRelationshipName": "trainingUnits",
+      "relationshipName": "language",
+      "otherEntityField": "id"
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "trainingSchedule",
+      "otherEntityRelationshipName": "trainingUnits",
+      "relationshipName": "trainingSchedules",
+      "otherEntityField": "id",
+      "ownerSide": false
+    },
+    {
+      "relationshipType": "many-to-many",
+      "otherEntityName": "media",
+      "otherEntityRelationshipName": "trainingUnits",
+      "relationshipName": "medias",
+      "otherEntityField": "id",
+      "ownerSide": false
+    }
+  ],
+  "changelogDate": "20210203150855",
+  "entityTableName": "training_unit",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": ["openfitnesstracker"]
+}

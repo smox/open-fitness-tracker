@@ -1,0 +1,25 @@
+{
+  "openfitnesstrackerApp": {
+    "targetWeight": {
+      "home": {
+        "title": "Target Weights",
+        "createLabel": "Target Weight erstellen",
+        "createOrEditLabel": "Target Weight erstellen oder bearbeiten",
+        "notFound": "No Target Weights found"
+      },
+      "created": "Target Weight erstellt mit ID {{ param }}",
+      "updated": "Target Weight aktualisiert mit ID {{ param }}",
+      "deleted": "Target Weight gelöscht mit ID {{ param }}",
+      "delete": {
+        "question": "Soll Target Weight {{ id }} wirklich dauerhaft gelöscht werden?"
+      },
+      "detail": {
+        "title": "Target Weight"
+      },
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "weight": "Weight",
+      "user": "User"
+    }
+  }
+}
