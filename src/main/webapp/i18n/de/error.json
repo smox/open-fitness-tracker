@@ -3,6 +3,7 @@
     "title": "Fehlerseite!",
     "http": {
       "400": "Ungültige Anfrage.",
+      "401": "Anfrage aufgrund fehlender oder ungültiger Authentifizierung abgelehnt",
       "403": "Sie haben nicht die nötigen Berechtigungen um diese Seite anzuzeigen.",
       "404": "Die Seite existiert nicht.",
       "405": "Die verwendete Anfrage-Methode ist für diese URL nicht erlaubt.",
