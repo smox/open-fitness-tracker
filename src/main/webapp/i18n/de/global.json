@@ -100,7 +100,8 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Ergebnis {{first}} - {{second}} von {{total}} Elemente."
+    "item-count": "Ergebnis {{first}} - {{second}} von {{total}} Elemente.",
+    "loggedOut": "Erfolgreich ausgelogged! Bis zum nächsten Mal!"
   },
   "entity": {
     "action": {
