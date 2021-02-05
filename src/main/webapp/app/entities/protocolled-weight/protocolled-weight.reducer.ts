@@ -3,6 +3,7 @@ import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } 
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { createEntity as createWeight } from 'app/entities/weight/weight.reducer';
 
 import { IProtocolledWeight, defaultValue } from 'app/shared/model/protocolled-weight.model';
 
@@ -71,13 +72,20 @@ export default (state: ProtocolledWeightState = initialState, action): Protocoll
         loading: false,
         entity: action.payload.data,
       };
-    case SUCCESS(ACTION_TYPES.CREATE_PROTOCOLLEDWEIGHT):
     case SUCCESS(ACTION_TYPES.UPDATE_PROTOCOLLEDWEIGHT):
       return {
         ...state,
         updating: false,
         updateSuccess: true,
         entity: action.payload.data,
+      };
+    case SUCCESS(ACTION_TYPES.CREATE_PROTOCOLLEDWEIGHT):
+      return {
+        ...state,
+        updating: false,
+        updateSuccess: true,
+        entity: action.payload.data,
+        entities: [...state.entities, action.payload.data],
       };
     case SUCCESS(ACTION_TYPES.DELETE_PROTOCOLLEDWEIGHT):
       return {
@@ -117,8 +125,20 @@ export const createEntity: ICrudPutAction<IProtocolledWeight> = entity => async 
     type: ACTION_TYPES.CREATE_PROTOCOLLEDWEIGHT,
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
-  dispatch(getEntities());
   return result;
+};
+
+export const createEntityWithWeightByUser: (entity: IProtocolledWeight) => void = (entity: IProtocolledWeight) => async (
+  dispatch,
+  getState
+) => {
+  await dispatch(createWeight(entity.weight));
+  entity.weight = getState().weight.entity;
+
+  await dispatch({
+    type: ACTION_TYPES.CREATE_PROTOCOLLEDWEIGHT,
+    payload: axios.post(apiUrl, cleanEntity(entity)),
+  });
 };
 
 export const updateEntity: ICrudPutAction<IProtocolledWeight> = entity => async dispatch => {

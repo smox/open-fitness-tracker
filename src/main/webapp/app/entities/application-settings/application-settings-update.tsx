@@ -8,9 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
 import { getEntity, updateEntity, createEntity, reset } from './application-settings.reducer';
-import { IApplicationSettings } from 'app/shared/model/application-settings.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 
 export interface IApplicationSettingsUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 

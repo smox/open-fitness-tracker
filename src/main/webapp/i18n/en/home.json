@@ -1,19 +1,34 @@
 {
   "home": {
-    "title": "Welcome, Java Hipster!",
+    "title": "Hello, {{username}}!",
     "subtitle": "This is your homepage",
     "logged": {
       "message": "You are logged in as user \"{{username}}\"."
     },
-    "question": "If you have any question on JHipster:",
-    "link": {
-      "homepage": "JHipster homepage",
-      "stackoverflow": "JHipster on Stack Overflow",
-      "bugtracker": "JHipster bug tracker",
-      "chat": "JHipster public chat room",
-      "follow": "follow @jhipster on Twitter"
+    "question": {
+      "writeUs": "If you have any question on Open Fitness Tracker, please write us an ",
+      "weight": "What is your weight?",
+      "lastWeighed": "When was the last time you weighed yourself?",
+      "weightTarget": {
+        "weight": "How much do you want to weigh?",
+        "date": "When do you want to have reached your goal?"
+      }
     },
-    "like": "If you like JHipster, don't forget to give us a star on",
-    "github": "GitHub"
+    "feedback": "For feedback or if you encounter bugs, please open a issue on",
+    "link": {
+      "e-mail": "e-Mail"
+    },
+    "greeting": {
+      "welcomeBack": "Welcome back! Enjoy your workout!",
+      "createTrainingSchedule": "Got it! Next step it to create a training plan!"
+    },
+    "like": "If you like Open Fitness Tracker, do not forget to give us a star on",
+    "github": "GitHub",
+    "tellUs": "New here? Tell us a little bit about you ...",
+    "validation": {
+      "targetWeightDate": "The date must be at least one day in the future.",
+      "lastWeightDate": "The date cannot be in the future.",
+      "required": "This field is reguired"
+    }
   }
 }

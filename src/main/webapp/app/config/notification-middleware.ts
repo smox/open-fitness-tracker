@@ -33,7 +33,9 @@ export default () => next => action => {
         });
         if (alert) {
           const alertParam = alertParams;
-          toast.success(translate(alert, { param: alertParam }));
+          if (alert !== 'openfitnesstrackerApp.weight.created') {
+            toast.success(translate(alert, { param: alertParam }));
+          }
         }
       }
       return Promise.resolve(response);

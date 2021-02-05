@@ -7,7 +7,7 @@
         "createOrEditLabel": "Protocolled Weight erstellen oder bearbeiten",
         "notFound": "No Protocolled Weights found"
       },
-      "created": "Protocolled Weight erstellt mit ID {{ param }}",
+      "created": "Neues Gewicht eingetragen",
       "updated": "Protocolled Weight aktualisiert mit ID {{ param }}",
       "deleted": "Protocolled Weight gelöscht mit ID {{ param }}",
       "delete": {

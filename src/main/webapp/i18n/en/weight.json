@@ -3,11 +3,11 @@
     "weight": {
       "home": {
         "title": "Weights",
-        "createLabel": "Create a new Weight",
-        "createOrEditLabel": "Create or edit a Weight",
-        "notFound": "No Weights found"
+        "createLabel": "Create a new weight",
+        "createOrEditLabel": "Create or edit a weight",
+        "notFound": "No weights found"
       },
-      "created": "A new Weight is created with identifier {{ param }}",
+      "created": "New weight created!",
       "updated": "A Weight is updated with identifier {{ param }}",
       "deleted": "A Weight is deleted with identifier {{ param }}",
       "delete": {

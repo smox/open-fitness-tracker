@@ -7,7 +7,7 @@
         "createOrEditLabel": "Weight erstellen oder bearbeiten",
         "notFound": "No Weights found"
       },
-      "created": "Weight erstellt mit ID {{ param }}",
+      "created": "Neues Gewicht eingetragen!",
       "updated": "Weight aktualisiert mit ID {{ param }}",
       "deleted": "Weight gelöscht mit ID {{ param }}",
       "delete": {

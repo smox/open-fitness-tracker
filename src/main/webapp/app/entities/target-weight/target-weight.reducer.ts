@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ITargetWeight, defaultValue } from 'app/shared/model/target-weight.model';
+import { createEntity as createWeight } from 'app/entities/weight/weight.reducer';
 
 export const ACTION_TYPES = {
   FETCH_TARGETWEIGHT_LIST: 'targetWeight/FETCH_TARGETWEIGHT_LIST',
@@ -72,6 +73,13 @@ export default (state: TargetWeightState = initialState, action): TargetWeightSt
         entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_TARGETWEIGHT):
+      return {
+        ...state,
+        updating: false,
+        updateSuccess: true,
+        entity: action.payload.data,
+        entities: [...state.entities, action.payload.data],
+      };
     case SUCCESS(ACTION_TYPES.UPDATE_TARGETWEIGHT):
       return {
         ...state,
@@ -117,8 +125,17 @@ export const createEntity: ICrudPutAction<ITargetWeight> = entity => async dispa
     type: ACTION_TYPES.CREATE_TARGETWEIGHT,
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
-  dispatch(getEntities());
   return result;
+};
+
+export const createEntityWithWeightByUser: (entity: ITargetWeight) => void = (entity: ITargetWeight) => async (dispatch, getState) => {
+  await dispatch(createWeight(entity.weight));
+  entity.weight = getState().weight.entity;
+
+  await dispatch({
+    type: ACTION_TYPES.CREATE_TARGETWEIGHT,
+    payload: axios.post(apiUrl, cleanEntity(entity)),
+  });
 };
 
 export const updateEntity: ICrudPutAction<ITargetWeight> = entity => async dispatch => {

@@ -7,7 +7,7 @@
         "createOrEditLabel": "Create or edit a Target Weight",
         "notFound": "No Target Weights found"
       },
-      "created": "A new Target Weight is created with identifier {{ param }}",
+      "created": "New target set!",
       "updated": "A Target Weight is updated with identifier {{ param }}",
       "deleted": "A Target Weight is deleted with identifier {{ param }}",
       "delete": {

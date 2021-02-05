@@ -72,6 +72,13 @@ export default (state: WeightState = initialState, action): WeightState => {
         entity: action.payload.data,
       };
     case SUCCESS(ACTION_TYPES.CREATE_WEIGHT):
+      return {
+        ...state,
+        updating: false,
+        updateSuccess: true,
+        entity: action.payload.data,
+        entities: [...state.entities, action.payload.data],
+      };
     case SUCCESS(ACTION_TYPES.UPDATE_WEIGHT):
       return {
         ...state,
@@ -117,7 +124,6 @@ export const createEntity: ICrudPutAction<IWeight> = entity => async dispatch =>
     type: ACTION_TYPES.CREATE_WEIGHT,
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
-  dispatch(getEntities());
   return result;
 };
 
