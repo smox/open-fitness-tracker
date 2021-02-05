@@ -8,9 +8,11 @@ const Footer = props => (
   <div className="footer page-content">
     <Row>
       <Col md="12">
-        <p>
-          <Translate contentKey="footer">Your footer</Translate>
-        </p>
+        <div className="card text-white bg-primary mb-3">
+            <p className="card-text">
+              <Translate contentKey="footer" />
+            </p>
+        </div>
       </Col>
     </Row>
   </div>
