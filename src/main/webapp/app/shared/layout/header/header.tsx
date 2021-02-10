@@ -11,6 +11,10 @@ import LoadingBar from 'react-redux-loading-bar';
 import { Home, Brand } from './header-components';
 import { AdminMenu, EntitiesMenu, AccountMenu, LocaleMenu } from '../menus';
 
+import { WorkoutMenu } from '../menus/workout';
+import { NutritionMenu } from '../menus/nutrition';
+import { WeightMenu } from '../menus/weight';
+
 export interface IHeaderProps {
   isAuthenticated: boolean;
   isAdmin: boolean;
@@ -53,6 +57,9 @@ const Header = (props: IHeaderProps) => {
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ml-auto" navbar>
             <Home />
+            {props.isAuthenticated && <WorkoutMenu /> }
+            {props.isAuthenticated && <WeightMenu /> }
+            {props.isAuthenticated && <NutritionMenu /> }
             {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && (
               <AdminMenu showSwagger={props.isSwaggerEnabled} showDatabase={!props.isInProduction} />

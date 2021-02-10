@@ -45,7 +45,24 @@
         "database": "Datenbank",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
-      "language": "Sprache"
+      "language": "Sprache",
+      "workout": {
+        "menu": "Training",
+        "new": "Neues Training starten",
+        "visualize": "Übersicht Trainingseinheiten"
+      },
+      "nutrition": {
+        "menu": "Ernährung",
+        "new": "Tageswerte eintragen",
+        "manage": "Tageswerte verwalten",
+        "visualize": "Übersicht Tageswerte"
+      },
+      "weight": {
+        "menu": "Gewicht",
+        "new": "Neues Gewicht eintragen",
+        "manage": "Gewichte verwalten",
+        "visualize": "Übersicht Gewicht"
+      }
     },
     "form": {
       "username.label": "Benutzername",
@@ -113,7 +130,8 @@
       "edit": "Bearbeiten",
       "open": "Öffnen",
       "save": "Speichern",
-      "view": "Details"
+      "view": "Details",
+      "actions": "Aktionen"
     },
     "detail": {
       "field": "Feld",

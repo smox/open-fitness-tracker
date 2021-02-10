@@ -3,7 +3,7 @@ import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } 
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
-import { createEntity as createWeight } from 'app/entities/weight/weight.reducer';
+import { createEntity as createWeight, deleteEntity as deleteWeight } from 'app/entities/weight/weight.reducer';
 
 import { IProtocolledWeight, defaultValue } from 'app/shared/model/protocolled-weight.model';
 
@@ -139,6 +139,18 @@ export const createEntityWithWeightByUser: (entity: IProtocolledWeight) => void 
     type: ACTION_TYPES.CREATE_PROTOCOLLEDWEIGHT,
     payload: axios.post(apiUrl, cleanEntity(entity)),
   });
+};
+
+export const deleteEntityWithWeight: (entity: IProtocolledWeight) => void = (entity: IProtocolledWeight) => async (dispatch, getState) => {
+  const weightId = entity.weight.id;
+  const requestUrl = `${apiUrl}/${entity.id}`;
+
+  await dispatch({
+    type: ACTION_TYPES.DELETE_PROTOCOLLEDWEIGHT,
+    payload: axios.delete(requestUrl),
+  });
+  await dispatch(deleteWeight(weightId));
+  dispatch(getEntities());
 };
 
 export const updateEntity: ICrudPutAction<IProtocolledWeight> = entity => async dispatch => {

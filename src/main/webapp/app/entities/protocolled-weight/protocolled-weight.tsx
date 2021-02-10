@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Col, Row, Table } from 'reactstrap';
-import { Translate, ICrudGetAllAction, TextFormat } from 'react-jhipster';
+import { Button, Table } from 'reactstrap';
+import { Translate, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './protocolled-weight.reducer';
-import { IProtocolledWeight } from 'app/shared/model/protocolled-weight.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface IProtocolledWeightProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 

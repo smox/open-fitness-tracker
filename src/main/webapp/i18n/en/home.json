@@ -22,6 +22,12 @@
       "welcomeBack": "Welcome back! Enjoy your workout!",
       "createTrainingSchedule": "Got it! Next step it to create a training plan!"
     },
+    "button": {
+      "addWeight": "Add Weight",
+      "addTarget": "Add Target",
+      "startWorkout": "Start Workout",
+      "feedback": "Feedback"
+    },
     "like": "If you like Open Fitness Tracker, do not forget to give us a star on",
     "github": "GitHub",
     "tellUs": "New here? Tell us a little bit about you ...",

@@ -12,6 +12,8 @@ import activate, { ActivateState } from 'app/modules/account/activate/activate.r
 import password, { PasswordState } from 'app/modules/account/password/password.reducer';
 import settings, { SettingsState } from 'app/modules/account/settings/settings.reducer';
 import passwordReset, { PasswordResetState } from 'app/modules/account/password-reset/password-reset.reducer';
+import weightAdd, { WeightAddState } from 'app/modules/weight/add/add.reducer';
+
 // prettier-ignore
 import applicationSettings, {
   ApplicationSettingsState
@@ -97,6 +99,7 @@ export interface IRootState {
   readonly language: LanguageState;
   /* jhipster-needle-add-reducer-type - JHipster will add reducer type here */
   readonly loadingBar: any;
+  readonly weightAdd: WeightAddState;
 }
 
 const rootReducer = combineReducers<IRootState>({
@@ -126,6 +129,7 @@ const rootReducer = combineReducers<IRootState>({
   language,
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
   loadingBar,
+  weightAdd,
 });
 
 export default rootReducer;

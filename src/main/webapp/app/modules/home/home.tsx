@@ -1,14 +1,14 @@
 import './home.scss';
 
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { Translate, translate } from 'react-jhipster';
-import { AvForm, AvGroup, AvField } from 'availity-reactstrap-validation';
 import { connect } from 'react-redux';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { AvForm, AvGroup, AvField } from 'availity-reactstrap-validation';
 import { Row, Col, Alert, Button, Label } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { getEntities as getUnits } from '../../entities/unit/unit.reducer';
+import { getEntities as getUnits } from 'app/entities/unit/unit.reducer';
+import { FloatingAddButton } from './floatingAddButton/floatingAddButton'; 
 import { 
   createEntityWithWeightByUser as createProtocolledWeightWithWeightByUser,
   getEntities as getProtocolledWeights
@@ -25,15 +25,12 @@ import { ITrainingSchedule } from 'app/shared/model/training-schedule.model';
 import { IWeight } from 'app/shared/model/weight.model';
 import { ITargetWeight } from 'app/shared/model/target-weight.model';
 
-export interface IHomeProp extends StateProps, DispatchProps {}
+export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export const Home = (props: IHomeProp) => {
 
-  const { account, isAuthenticated, availableUnits, currentUserId, isNewUser, noTrainingScheduleForUser } = props;
+  const { account, isAuthenticated, availableUnits, currentUserId, isNewUser, noTrainingScheduleForUser, match } = props;
   const username = account && account.firstName ? account.firstName : account.login
-
-  // eslint-disable-next-line no-console
-  console.log(account);
 
   if(isAuthenticated) {
     useEffect(() => {
@@ -85,171 +82,176 @@ export const Home = (props: IHomeProp) => {
   }
 
   return (
-    <Row>
-      <Col md="12">
-        { account && account.login ? (
+    <div className="fill">
+      { account && account.login ? (
+        <div>
+          <Row>
+            <Col md="12">
+              <h2>
+                <Translate contentKey="home.title" interpolate={{ username }}>Hello, { username }!</Translate>
+              </h2>
+            </Col>
+          </Row>
+          &nbsp;
+          { isNewUser ? (
           <div>
-            <h2>
-              <Translate contentKey="home.title" interpolate={{ username }}>Hello, { username }!</Translate>
-            </h2>
-            &nbsp;
-            { isNewUser ? (
-            <div>
-              <div>
-                <Row className="justify-content-center">
-                  <Col md="12">
-                    <h3 id="openfitnesstrackerApp.home.initialData.title">
-                      <Translate contentKey="home.tellUs">New here? Tell us a little bit about you ...</Translate>
-                    </h3>
-                  </Col>
-                </Row>
-                <Row className="justify-content">
-                  <Col xs="12" md="12" lg="10" xl="7">
-                    <AvForm onValidSubmit={ saveEntity }>
-                      <AvGroup id="application-home-init-currentWeight">
+            <Row className="justify-content-center">
+              <Col md="12">
+                <h3 id="openfitnesstrackerApp.home.initialData.title">
+                  <Translate contentKey="home.tellUs">New here? Tell us a little bit about you ...</Translate>
+                </h3>
+              </Col>
+            </Row>
+            <Row className="justify-content">
+              <Col xs="12" md="12" lg="10" xl="7">
+                <AvForm onValidSubmit={ saveEntity }>
+                  <AvGroup id="application-home-init-currentWeight">
+                    <Row>
+                      <Col xs="12" sm="5" md="6" lg="7">
+                        <Label id="application-home-init-currentWeight-label" for="application-home-init-currentWeight-field">
+                          <Translate contentKey="home.question.weight"></Translate>
+                        </Label>
+                      </Col>
+                      <Col sm="7" md="6" lg="5">
                         <Row>
-                          <Col xs="12" sm="5" md="6" lg="7">
-                            <Label id="application-home-init-currentWeight-label" for="application-home-init-currentWeight-field">
-                              <Translate contentKey="home.question.weight"></Translate>
-                            </Label>
+                          <Col xs="6">
+                            <AvField id="application-home-init-currentWeight-field" 
+                              name="application-home-init-currentWeight-field" 
+                              type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
                           </Col>
-                          <Col sm="7" md="6" lg="5">
-                            <Row>
-                              <Col xs="6">
-                                <AvField id="application-home-init-currentWeight-field" 
-                                  name="application-home-init-currentWeight-field" 
-                                  type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
-                              </Col>
-                              <Col xs="6">
-                                <AvField type="select" name="application-home-init-currentWeightUnit-field">
-                                  { availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
-                                </AvField>
-                              </Col>
-                            </Row>
+                          <Col xs="6">
+                            <AvField type="select" name="application-home-init-currentWeightUnit-field">
+                              { availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
+                            </AvField>
                           </Col>
                         </Row>
-                      </AvGroup>
-                      <AvGroup id="application-home-init-lastWeighed">
-                        <Row>
-                          <Col xs="12" sm="5" md="6" lg="7">
-                            <Label id="application-home-init-lastWeighed-label" for="application-home-init-lastWeighed-label">
-                              <Translate contentKey="home.question.lastWeighed">When was the last time you weighed yourself</Translate>
-                            </Label>
+                      </Col>
+                    </Row>
+                  </AvGroup>
+                  <AvGroup id="application-home-init-lastWeighed">
+                    <Row>
+                      <Col xs="12" sm="5" md="6" lg="7">
+                        <Label id="application-home-init-lastWeighed-label" for="application-home-init-lastWeighed-label">
+                          <Translate contentKey="home.question.lastWeighed">When was the last time you weighed yourself</Translate>
+                        </Label>
+                        </Col>
+                        <Col sm="7" md="6" lg="5">
+                          <Row>
+                            <Col xs="6">
+                              <AvField id="application-home-init-lastWeighed-date-field" type="date" 
+                                name="application-home-init-lastWeighed-date-field" required 
+                                validate={{async: valLastWeightDate}} errorMessage={translate("home.validation.lastWeightDate")}/>
                             </Col>
-                            <Col sm="7" md="6" lg="5">
-                              <Row>
-                                <Col xs="6">
-                                  <AvField id="application-home-init-lastWeighed-date-field" type="date" 
-                                    name="application-home-init-lastWeighed-date-field" required 
-                                    validate={{async: valLastWeightDate}} errorMessage={translate("home.validation.lastWeightDate")}/>
-                                </Col>
-                                <Col xs="6">
-                                  <AvField id="application-home-init-lastWeighed-time-field" type="time" 
-                                    name="application-home-init-lastWeighed-time-field" required errorMessage={translate("home.validation.required")}/>
-                                </Col>
-                              </Row>
+                            <Col xs="6">
+                              <AvField id="application-home-init-lastWeighed-time-field" type="time" 
+                                name="application-home-init-lastWeighed-time-field" required errorMessage={translate("home.validation.required")}/>
                             </Col>
-                        </Row>
-                      </AvGroup>
-                      <AvGroup id="application-home-init-targetWeight">
+                          </Row>
+                        </Col>
+                    </Row>
+                  </AvGroup>
+                  <AvGroup id="application-home-init-targetWeight">
+                    <Row>
+                      <Col xs="12" sm="5" md="6" lg="7">
+                        <Label id="application-home-init-targetWeight-label" for="application-home-init-targetWeight-field">
+                          <Translate contentKey="home.question.weightTarget.weight">How much do you want to weigh?</Translate>
+                        </Label>
+                      </Col>
+                      <Col sm="7" md="6" lg="5">
                         <Row>
-                          <Col xs="12" sm="5" md="6" lg="7">
-                            <Label id="application-home-init-targetWeight-label" for="application-home-init-targetWeight-field">
-                              <Translate contentKey="home.question.weightTarget.weight">How much do you want to weigh?</Translate>
-                            </Label>
+                          <Col xs="6">
+                            <AvField id="application-home-init-targetWeight-field" 
+                              name="application-home-init-targetWeight-field" 
+                              type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
                           </Col>
-                          <Col sm="7" md="6" lg="5">
-                            <Row>
-                              <Col xs="6">
-                                <AvField id="application-home-init-targetWeight-field" 
-                                  name="application-home-init-targetWeight-field" 
-                                  type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
-                              </Col>
-                              <Col xs="6">
-                                <AvField type="select" name="application-home-init-targetWeightUnit-field">
-                                  { availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
-                                </AvField>
-                              </Col>
-                            </Row>
+                          <Col xs="6">
+                            <AvField type="select" name="application-home-init-targetWeightUnit-field">
+                              { availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
+                            </AvField>
                           </Col>
                         </Row>
-                      </AvGroup>
-                      <AvGroup>
-                        <Row>
-                          <Col xs="12" sm="5" md="6" lg="7">
-                            <Label id="defaultThemeLabel" for="application-settings-defaultTheme">
-                              <Translate contentKey="home.question.weightTarget.date">When do you want to have reached your goal </Translate>
-                            </Label>
-                          </Col>
-                          <Col sm="7" md="6" lg="5">
-                              <Row>
-                                <Col xs="6">
-                                  <AvField id="application-home-init-targetWeight-date-field" type="date" 
-                                    name="application-home-init-targetWeight-date-field" required 
-                                    validate={{async: valTargetWeightDate}} errorMessage={translate("home.validation.targetWeightDate")} />
-                                </Col>
-                                <Col xs="6">
-                                  <AvField id="application-home-init-targetWeight-time-field" type="time" 
-                                    name="application-home-init-targetWeight-time-field" required errorMessage={translate("home.validation.required")}/>
-                                </Col>
-                              </Row>
+                      </Col>
+                    </Row>
+                  </AvGroup>
+                  <AvGroup>
+                    <Row>
+                      <Col xs="12" sm="5" md="6" lg="7">
+                        <Label id="defaultThemeLabel" for="application-settings-defaultTheme">
+                          <Translate contentKey="home.question.weightTarget.date">When do you want to have reached your goal </Translate>
+                        </Label>
+                      </Col>
+                      <Col sm="7" md="6" lg="5">
+                          <Row>
+                            <Col xs="6">
+                              <AvField id="application-home-init-targetWeight-date-field" type="date" 
+                                name="application-home-init-targetWeight-date-field" required 
+                                validate={{async: valTargetWeightDate}} errorMessage={translate("home.validation.targetWeightDate")} />
                             </Col>
-                        </Row>
-                      </AvGroup>
-                      <Button color="primary" id="save-entity" type="submit" disabled={false}>
-                        <FontAwesomeIcon icon="save" />
-                        &nbsp;
-                        <Translate contentKey="entity.action.save">Save</Translate>
-                      </Button>
-                    </AvForm>
-                  </Col>
-                </Row>
-              </div>
-            </div> ) : (
-              <Alert color="success">
-                {
-                   noTrainingScheduleForUser ? (
-                    <Translate contentKey="home.greeting.createTrainingSchedule">Got it! Next step it to create a training plan!</Translate>
-                  ) : (
-                    <Translate contentKey="home.greeting.welcometrainingsplanExistsBack">Welcome back! Enjoy your workout!</Translate>
-                  )
-                }
-              </Alert>
-            )
-            }
-          </div>
-        ) : (
+                            <Col xs="6">
+                              <AvField id="application-home-init-targetWeight-time-field" type="time" 
+                                name="application-home-init-targetWeight-time-field" required errorMessage={translate("home.validation.required")}/>
+                            </Col>
+                          </Row>
+                        </Col>
+                    </Row>
+                  </AvGroup>
+                  <Button color="primary" id="save-entity" type="submit" disabled={false}>
+                    <FontAwesomeIcon icon="save" />
+                    &nbsp;
+                    <Translate contentKey="entity.action.save">Save</Translate>
+                  </Button>
+                </AvForm>
+              </Col>
+            </Row>
+          </div> ) : (
           <>
-            <div>
-              <Alert color="warning">
-                <Translate contentKey="global.messages.info.register.noaccount">You do not have an account yet?</Translate>&nbsp;
-                <Link to="/account/register" className="alert-link">
-                  <Translate contentKey="global.messages.info.register.link">Register a new account</Translate>
-                </Link>
-              </Alert>
-            </div>
-            <p>
-              <Translate contentKey="home.question.writeUs">If you have any question on Open Fitness Tracker, please write us an </Translate>
-              <a href="mailto:open-fitness-tracker@sm0x.org" target="_blank" rel="noopener noreferrer">
-                  <Translate contentKey="home.link.e-mail">e-Mail</Translate>
-              </a>
-            </p>
-            <p>
-              <Translate contentKey="home.feedback">For feedback or if you encounter bugs, please open a issue on </Translate>
-              <a href="https://github.com/smox/open-fitness-tracker/issues" target="_blank" rel="noopener noreferrer">
-                  Github
-              </a>
-            </p>
-            <p>
-              <Translate contentKey="home.like">If you like Open Fitness Tracker, do not forget to give us a star on</Translate>{' '}
-              <a href="https://github.com/smox/open-fitness-tracker" target="_blank" rel="noopener noreferrer">
-                Github
-              </a>
-            </p>
+            <Alert color="success">
+              {
+                noTrainingScheduleForUser ? (
+                  <>
+                    <Translate contentKey="home.greeting.createTrainingSchedule">Got it! Next step it to create a training plan!</Translate>
+                  </>
+                ) : (
+                  <Translate contentKey="home.greeting.trainingsplanExists">Welcome back! Enjoy your workout!</Translate>
+                )
+              }
+            </Alert>
+            <FloatingAddButton match={match} />
           </>
-        )}
-      </Col>
-    </Row>
+          )
+          }
+        </div>
+      ) : (
+        <>
+          <div>
+            <Alert color="warning">
+              <Translate contentKey="global.messages.info.register.noaccount">You do not have an account yet?</Translate>&nbsp;
+              <Link to="/account/register" className="alert-link">
+                <Translate contentKey="global.messages.info.register.link">Register a new account</Translate>
+              </Link>
+            </Alert>
+          </div>
+          <p>
+            <Translate contentKey="home.question.writeUs">If you have any question on Open Fitness Tracker, please write us an </Translate>
+            <a href="mailto:open-fitness-tracker@sm0x.org" target="_blank" rel="noopener noreferrer">
+                <Translate contentKey="home.link.e-mail">e-Mail</Translate>
+            </a>
+          </p>
+          <p>
+            <Translate contentKey="home.feedback">For feedback or if you encounter bugs, please open a issue on </Translate>
+            <a href="https://github.com/smox/open-fitness-tracker/issues" target="_blank" rel="noopener noreferrer">
+                Github
+            </a>
+          </p>
+          <p>
+            <Translate contentKey="home.like">If you like Open Fitness Tracker, do not forget to give us a star on</Translate>{' '}
+            <a href="https://github.com/smox/open-fitness-tracker" target="_blank" rel="noopener noreferrer">
+              Github
+            </a>
+          </p>
+        </>
+      )}
+    </div>
   );
 };
 

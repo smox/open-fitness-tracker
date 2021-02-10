@@ -45,7 +45,24 @@
         "database": "Database",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
       },
-      "language": "Language"
+      "language": "Language",
+      "workout": {
+        "menu": "Workout",
+        "new": "Start new workout",
+        "visualize": "Workout overview"
+      },
+      "nutrition": {
+        "menu": "Nutrition",
+        "new": "Add daily nutrition",
+        "manage": "Manage daily nutrition",
+        "visualize": "Nutrition overview"
+      },
+      "weight": {
+        "menu": "Weight",
+        "new": "Add new weight",
+        "manage": "Manage weights",
+        "visualize": "Weight overview"
+      }
     },
     "form": {
       "username.label": "Username",
@@ -113,7 +130,8 @@
       "edit": "Edit",
       "open": "Open",
       "save": "Save",
-      "view": "View"
+      "view": "View",
+      "actions": "Actions"
     },
     "detail": {
       "field": "Field",

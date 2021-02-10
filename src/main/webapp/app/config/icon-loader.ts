@@ -30,6 +30,7 @@ import { faRoad } from '@fortawesome/free-solid-svg-icons/faRoad';
 import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { faBullseye, faCommentAlt, faDumbbell, faWeight } from '@fortawesome/free-solid-svg-icons';
 
 export const loadIcons = () => {
   library.add(
@@ -62,6 +63,10 @@ export const loadIcons = () => {
     faRoad,
     faCloud,
     faTimesCircle,
-    faSearch
+    faSearch,
+    faCommentAlt,
+    faWeight,
+    faDumbbell,
+    faBullseye
   );
 };

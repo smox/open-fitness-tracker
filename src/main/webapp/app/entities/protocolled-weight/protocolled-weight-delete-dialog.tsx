@@ -2,16 +2,16 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { Translate, ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
+import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { IProtocolledWeight } from 'app/shared/model/protocolled-weight.model';
 import { IRootState } from 'app/shared/reducers';
-import { getEntity, deleteEntity } from './protocolled-weight.reducer';
+import { getEntity, deleteEntity } from 'app/entities/protocolled-weight/protocolled-weight.reducer';
 
 export interface IProtocolledWeightDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const ProtocolledWeightDeleteDialog = (props: IProtocolledWeightDeleteDialogProps) => {
+  
   useEffect(() => {
     props.getEntity(props.match.params.id);
   }, []);
@@ -37,7 +37,7 @@ export const ProtocolledWeightDeleteDialog = (props: IProtocolledWeightDeleteDia
         <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
       </ModalHeader>
       <ModalBody id="openfitnesstrackerApp.protocolledWeight.delete.question">
-        <Translate contentKey="openfitnesstrackerApp.protocolledWeight.delete.question" interpolate={{ id: protocolledWeightEntity.id }}>
+        <Translate contentKey="openfitnesstrackerApp.protocolledWeight.delete.question" interpolate={{ id: protocolledWeightEntity ? protocolledWeightEntity.id : 0 }}>
           Are you sure you want to delete this ProtocolledWeight?
         </Translate>
       </ModalBody>

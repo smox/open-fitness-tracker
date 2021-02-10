@@ -9,15 +9,16 @@
       },
       "created": "Neues Gewicht eingetragen",
       "updated": "Protocolled Weight aktualisiert mit ID {{ param }}",
-      "deleted": "Protocolled Weight gelöscht mit ID {{ param }}",
+      "deleted": "Das Gewicht wurde erfolgreich gelöscht",
       "delete": {
-        "question": "Soll Protocolled Weight {{ id }} wirklich dauerhaft gelöscht werden?"
+        "question": "Soll Protocolled Weight {{ id }} wirklich dauerhaft gelöscht werden?",
+        "question2": "Soll das Gewicht {{ name }} wirklich dauerhaft gelöscht werden?"
       },
       "detail": {
         "title": "Protocolled Weight"
       },
-      "time": "Time",
-      "weight": "Weight",
+      "time": "Zeitpunkt",
+      "weight": "Gewicht",
       "user": "User"
     }
   }

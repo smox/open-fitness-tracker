@@ -33,7 +33,7 @@ export default () => next => action => {
         });
         if (alert) {
           const alertParam = alertParams;
-          if (alert !== 'openfitnesstrackerApp.weight.created') {
+          if (alert !== 'openfitnesstrackerApp.weight.created' && alert !== 'openfitnesstrackerApp.weight.deleted') {
             toast.success(translate(alert, { param: alertParam }));
           }
         }
