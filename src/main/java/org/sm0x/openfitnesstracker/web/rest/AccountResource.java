@@ -29,6 +29,9 @@ import java.util.*;
 public class AccountResource {
 
     private static class AccountResourceException extends RuntimeException {
+
+        private static final long serialVersionUID = -7802898093565049833L;
+
         private AccountResourceException(String message) {
             super(message);
         }
