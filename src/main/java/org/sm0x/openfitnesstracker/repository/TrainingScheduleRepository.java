@@ -29,4 +29,7 @@ public interface TrainingScheduleRepository extends JpaRepository<TrainingSchedu
 
     @Query("select trainingSchedule from TrainingSchedule trainingSchedule left join fetch trainingSchedule.trainingUnits where trainingSchedule.id =:id")
     Optional<TrainingSchedule> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select trainingSchedule from TrainingSchedule trainingSchedule where trainingSchedule.user.login = ?#{principal.username} and trainingSchedule.id = ?1")
+    Optional<TrainingSchedule> findByUserIsCurrentUserAndId(Long id);
 }

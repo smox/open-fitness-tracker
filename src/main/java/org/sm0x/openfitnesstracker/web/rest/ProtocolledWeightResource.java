@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.ProtocolledWeight;
 import org.sm0x.openfitnesstracker.repository.ProtocolledWeightRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class ProtocolledWeightResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final ProtocolledWeightRepository protocolledWeightRepository;
 
-    public ProtocolledWeightResource(ProtocolledWeightRepository protocolledWeightRepository) {
+    public ProtocolledWeightResource(UserRepository userRepository, ProtocolledWeightRepository protocolledWeightRepository) {
+        this.userRepository = userRepository;
         this.protocolledWeightRepository = protocolledWeightRepository;
     }
 
@@ -49,9 +55,19 @@ public class ProtocolledWeightResource {
     @PostMapping("/protocolled-weights")
     public ResponseEntity<ProtocolledWeight> createProtocolledWeight(@RequestBody ProtocolledWeight protocolledWeight) throws URISyntaxException {
         log.debug("REST request to save ProtocolledWeight : {}", protocolledWeight);
+
         if (protocolledWeight.getId() != null) {
             throw new BadRequestAlertException("A new protocolledWeight cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            protocolledWeight.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(protocolledWeight.getUser() == null) {
+            throw new BadRequestAlertException("ProtocolledWeight must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         ProtocolledWeight result = protocolledWeightRepository.save(protocolledWeight);
         return ResponseEntity.created(new URI("/api/protocolled-weights/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +89,15 @@ public class ProtocolledWeightResource {
         if (protocolledWeight.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            protocolledWeight.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(protocolledWeight.getUser() == null) {
+            throw new BadRequestAlertException("ProtocolledWeight must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         ProtocolledWeight result = protocolledWeightRepository.save(protocolledWeight);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, protocolledWeight.getId().toString()))
@@ -86,8 +111,15 @@ public class ProtocolledWeightResource {
      */
     @GetMapping("/protocolled-weights")
     public List<ProtocolledWeight> getAllProtocolledWeights() {
-        log.debug("REST request to get all ProtocolledWeights");
-        return protocolledWeightRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all ProtocolledWeights");
+            return protocolledWeightRepository.findAll();
+        } else {
+            log.debug("REST request to get all ProtocolledWeights by current user");
+            List<ProtocolledWeight> findByUserIsCurrentUser = protocolledWeightRepository.findByUserIsCurrentUser();
+            findByUserIsCurrentUser.forEach((ProtocolledWeight pw) -> System.out.println(pw.getTime()));
+            return findByUserIsCurrentUser;
+        }
     }
 
     /**
@@ -98,9 +130,13 @@ public class ProtocolledWeightResource {
      */
     @GetMapping("/protocolled-weights/{id}")
     public ResponseEntity<ProtocolledWeight> getProtocolledWeight(@PathVariable Long id) {
-        log.debug("REST request to get ProtocolledWeight : {}", id);
-        Optional<ProtocolledWeight> protocolledWeight = protocolledWeightRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(protocolledWeight);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get ProtocolledWeight : {}", id);
+            return ResponseUtil.wrapOrNotFound(protocolledWeightRepository.findById(id));
+        } else {
+            log.debug("REST request to get ProtocolledWeight : {}", id);
+            return ResponseUtil.wrapOrNotFound(protocolledWeightRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +147,19 @@ public class ProtocolledWeightResource {
      */
     @DeleteMapping("/protocolled-weights/{id}")
     public ResponseEntity<Void> deleteProtocolledWeight(@PathVariable Long id) {
-        log.debug("REST request to delete ProtocolledWeight : {}", id);
-        protocolledWeightRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete ProtocolledWeight : {}", id);
+            protocolledWeightRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete ProtocolledWeight for current user : {}", id);
+            Optional<ProtocolledWeight> findById = protocolledWeightRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    protocolledWeightRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

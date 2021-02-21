@@ -1,7 +1,10 @@
 package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.UserSettings;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
 import org.sm0x.openfitnesstracker.repository.UserSettingsRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class UserSettingsResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final UserSettingsRepository userSettingsRepository;
 
-    public UserSettingsResource(UserSettingsRepository userSettingsRepository) {
+    public UserSettingsResource(UserRepository userRepository, UserSettingsRepository userSettingsRepository) {
+        this.userRepository = userRepository;
         this.userSettingsRepository = userSettingsRepository;
     }
 
@@ -52,6 +58,15 @@ public class UserSettingsResource {
         if (userSettings.getId() != null) {
             throw new BadRequestAlertException("A new userSettings cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            userSettings.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(userSettings.getUser() == null) {
+            throw new BadRequestAlertException("UserSettings must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+        
         UserSettings result = userSettingsRepository.save(userSettings);
         return ResponseEntity.created(new URI("/api/user-settings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class UserSettingsResource {
         if (userSettings.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            userSettings.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(userSettings.getUser() == null) {
+            throw new BadRequestAlertException("UserSettings must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         UserSettings result = userSettingsRepository.save(userSettings);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, userSettings.getId().toString()))
@@ -86,8 +110,13 @@ public class UserSettingsResource {
      */
     @GetMapping("/user-settings")
     public List<UserSettings> getAllUserSettings() {
-        log.debug("REST request to get all UserSettings");
-        return userSettingsRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all UserSettings");
+            return userSettingsRepository.findAll();
+        } else {
+            log.debug("REST request to get all UserSettings by current user");
+            return userSettingsRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +127,13 @@ public class UserSettingsResource {
      */
     @GetMapping("/user-settings/{id}")
     public ResponseEntity<UserSettings> getUserSettings(@PathVariable Long id) {
-        log.debug("REST request to get UserSettings : {}", id);
-        Optional<UserSettings> userSettings = userSettingsRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(userSettings);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get UserSettings : {}", id);
+            return ResponseUtil.wrapOrNotFound(userSettingsRepository.findById(id));
+        } else {
+            log.debug("REST request to get UserSettings : {}", id);
+            return ResponseUtil.wrapOrNotFound(userSettingsRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +144,19 @@ public class UserSettingsResource {
      */
     @DeleteMapping("/user-settings/{id}")
     public ResponseEntity<Void> deleteUserSettings(@PathVariable Long id) {
-        log.debug("REST request to delete UserSettings : {}", id);
-        userSettingsRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete UserSettings : {}", id);
+            userSettingsRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete UserSettings for current user : {}", id);
+            Optional<UserSettings> findById = userSettingsRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    userSettingsRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

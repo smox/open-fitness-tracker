@@ -2,6 +2,8 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.Unit;
 import org.sm0x.openfitnesstracker.repository.UnitRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -52,6 +54,11 @@ public class UnitResource {
         if (unit.getId() != null) {
             throw new BadRequestAlertException("A new unit cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to create a unit", ENTITY_NAME, "notadmin");          
+        }
+
         Unit result = unitRepository.save(unit);
         return ResponseEntity.created(new URI("/api/units/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +80,11 @@ public class UnitResource {
         if (unit.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to change a unit", ENTITY_NAME, "notadmin");          
+        }
+
         Unit result = unitRepository.save(unit);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, unit.getId().toString()))
@@ -112,6 +124,9 @@ public class UnitResource {
     @DeleteMapping("/units/{id}")
     public ResponseEntity<Void> deleteUnit(@PathVariable Long id) {
         log.debug("REST request to delete Unit : {}", id);
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to delete a unit", ENTITY_NAME, "notadmin");          
+        }
         unitRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }

@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.Nutrition;
 import org.sm0x.openfitnesstracker.repository.NutritionRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class NutritionResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final NutritionRepository nutritionRepository;
 
-    public NutritionResource(NutritionRepository nutritionRepository) {
+    public NutritionResource(UserRepository userRepository, NutritionRepository nutritionRepository) {
+        this.userRepository = userRepository;
         this.nutritionRepository = nutritionRepository;
     }
 
@@ -52,6 +58,15 @@ public class NutritionResource {
         if (nutrition.getId() != null) {
             throw new BadRequestAlertException("A new nutrition cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            nutrition.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(nutrition.getUser() == null) {
+            throw new BadRequestAlertException("Nutrition must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         Nutrition result = nutritionRepository.save(nutrition);
         return ResponseEntity.created(new URI("/api/nutritions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class NutritionResource {
         if (nutrition.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            nutrition.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(nutrition.getUser() == null) {
+            throw new BadRequestAlertException("Nutrition must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+        
         Nutrition result = nutritionRepository.save(nutrition);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, nutrition.getId().toString()))
@@ -86,8 +110,13 @@ public class NutritionResource {
      */
     @GetMapping("/nutritions")
     public List<Nutrition> getAllNutritions() {
-        log.debug("REST request to get all Nutritions");
-        return nutritionRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all Nutritions");
+            return nutritionRepository.findAll();
+        } else {
+            log.debug("REST request to get all Nutritions by current user");
+            return nutritionRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +127,13 @@ public class NutritionResource {
      */
     @GetMapping("/nutritions/{id}")
     public ResponseEntity<Nutrition> getNutrition(@PathVariable Long id) {
-        log.debug("REST request to get Nutrition : {}", id);
-        Optional<Nutrition> nutrition = nutritionRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(nutrition);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get Nutrition : {}", id);
+            return ResponseUtil.wrapOrNotFound(nutritionRepository.findById(id));
+        } else {
+            log.debug("REST request to get Nutritions : {}", id);
+            return ResponseUtil.wrapOrNotFound(nutritionRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +144,17 @@ public class NutritionResource {
      */
     @DeleteMapping("/nutritions/{id}")
     public ResponseEntity<Void> deleteNutrition(@PathVariable Long id) {
-        log.debug("REST request to delete Nutrition : {}", id);
-        nutritionRepository.deleteById(id);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete Nutrition : {}", id);
+            nutritionRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete Nutrition for current user : {}", id);
+            Optional<Nutrition> findById = nutritionRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    nutritionRepository.deleteById(findById.get().getId());
+            }
+        }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

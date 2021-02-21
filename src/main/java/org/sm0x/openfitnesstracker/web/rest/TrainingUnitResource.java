@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.TrainingUnit;
 import org.sm0x.openfitnesstracker.repository.TrainingUnitRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class TrainingUnitResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final TrainingUnitRepository trainingUnitRepository;
 
-    public TrainingUnitResource(TrainingUnitRepository trainingUnitRepository) {
+    public TrainingUnitResource(UserRepository userRepository, TrainingUnitRepository trainingUnitRepository) {
+        this.userRepository = userRepository;
         this.trainingUnitRepository = trainingUnitRepository;
     }
 
@@ -52,6 +58,15 @@ public class TrainingUnitResource {
         if (trainingUnit.getId() != null) {
             throw new BadRequestAlertException("A new trainingUnit cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            trainingUnit.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(trainingUnit.getUser() == null) {
+            throw new BadRequestAlertException("TrainingUnit must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+        
         TrainingUnit result = trainingUnitRepository.save(trainingUnit);
         return ResponseEntity.created(new URI("/api/training-units/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class TrainingUnitResource {
         if (trainingUnit.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            trainingUnit.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(trainingUnit.getUser() == null) {
+            throw new BadRequestAlertException("TrainingUnit must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         TrainingUnit result = trainingUnitRepository.save(trainingUnit);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, trainingUnit.getId().toString()))
@@ -87,8 +111,13 @@ public class TrainingUnitResource {
      */
     @GetMapping("/training-units")
     public List<TrainingUnit> getAllTrainingUnits(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get all TrainingUnits");
-        return trainingUnitRepository.findAllWithEagerRelationships();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all trainingUnits");
+            return trainingUnitRepository.findAllWithEagerRelationships();
+        } else {
+            log.debug("REST request to get all trainingUnits by current user");
+            return trainingUnitRepository.findByUserIsCurrentUserWithEagerRelationships();
+        }
     }
 
     /**
@@ -99,9 +128,13 @@ public class TrainingUnitResource {
      */
     @GetMapping("/training-units/{id}")
     public ResponseEntity<TrainingUnit> getTrainingUnit(@PathVariable Long id) {
-        log.debug("REST request to get TrainingUnit : {}", id);
-        Optional<TrainingUnit> trainingUnit = trainingUnitRepository.findOneWithEagerRelationships(id);
-        return ResponseUtil.wrapOrNotFound(trainingUnit);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get TrainingUnit : {}", id);
+            return ResponseUtil.wrapOrNotFound(trainingUnitRepository.findOneWithEagerRelationships(id));
+        } else {
+            log.debug("REST request to get TrainingUnit : {}", id);
+            return ResponseUtil.wrapOrNotFound(trainingUnitRepository.findOneByUserIsCurrentUserAndIdWithEagerRelationships(id));
+        }
     }
 
     /**
@@ -112,8 +145,19 @@ public class TrainingUnitResource {
      */
     @DeleteMapping("/training-units/{id}")
     public ResponseEntity<Void> deleteTrainingUnit(@PathVariable Long id) {
-        log.debug("REST request to delete TrainingUnit : {}", id);
-        trainingUnitRepository.deleteById(id);
+        
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete TrainingUnit : {}", id);
+            trainingUnitRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete TrainingUnit for current user : {}", id);
+            Optional<TrainingUnit> findById = trainingUnitRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    trainingUnitRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

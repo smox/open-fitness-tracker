@@ -34,6 +34,14 @@
       "otherEntityRelationshipName": "weight",
       "relationshipName": "units",
       "otherEntityField": "id"
+    },
+    {
+      "relationshipName": "user",
+      "otherEntityName": "user",
+      "relationshipType": "many-to-one",
+      "otherEntityField": "login",
+      "ownerSide": true,
+      "otherEntityRelationshipName": "weight"
     }
   ],
   "changelogDate": "20210203151555",
@@ -47,5 +55,7 @@
   "readOnly": false,
   "embedded": false,
   "clientRootFolder": "",
-  "applications": ["openfitnesstracker"]
+  "applications": ["openfitnesstracker"],
+  "searchEngine": false,
+  "databaseType": "sql"
 }

@@ -4,11 +4,21 @@ import org.sm0x.openfitnesstracker.domain.Weight;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data  repository for the Weight entity.
  */
-@SuppressWarnings("unused")
 @Repository
 public interface WeightRepository extends JpaRepository<Weight, Long> {
+
+    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username}")
+    List<Weight> findByUserIsCurrentUser();
+
+    @Query("select weight from Weight weight where weight.user.login = ?#{principal.username} and weight.id = ?1")
+    Optional<Weight> findByUserIsCurrentUserAndId(Long id);
+
 }

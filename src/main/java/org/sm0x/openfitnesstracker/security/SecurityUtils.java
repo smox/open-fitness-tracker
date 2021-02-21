@@ -1,5 +1,7 @@
 package org.sm0x.openfitnesstracker.security;
 
+import org.sm0x.openfitnesstracker.domain.User;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
@@ -38,6 +40,20 @@ public final class SecurityUtils {
         }
         return null;
     }
+
+    public static User getCurrentUser(UserRepository userRepository) {
+
+        Optional<String> currentUser = getCurrentUserLogin();
+        if(currentUser.isPresent()) {
+            Optional<User> findOneByLogin = userRepository.findOneByLogin(currentUser.get());
+            if(findOneByLogin.isPresent()) {
+                return findOneByLogin.get();
+            } 
+        } 
+
+        return null;
+    }
+        
 
 
     /**

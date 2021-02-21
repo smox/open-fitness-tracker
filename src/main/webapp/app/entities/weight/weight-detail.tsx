@@ -35,6 +35,10 @@ export const WeightDetail = (props: IWeightDetailProps) => {
             <Translate contentKey="openfitnesstrackerApp.weight.units">Units</Translate>
           </dt>
           <dd>{weightEntity.units ? weightEntity.units.id : ''}</dd>
+          <dt>
+            <Translate contentKey="openfitnesstrackerApp.weight.user">User</Translate>
+          </dt>
+          <dd>{weightEntity.user ? weightEntity.user.login : ''}</dd>
         </dl>
         <Button tag={Link} to="/weight" replace color="info">
           <FontAwesomeIcon icon="arrow-left" />{' '}

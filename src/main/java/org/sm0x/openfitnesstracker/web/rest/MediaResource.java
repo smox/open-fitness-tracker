@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.Media;
 import org.sm0x.openfitnesstracker.repository.MediaRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class MediaResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final MediaRepository mediaRepository;
 
-    public MediaResource(MediaRepository mediaRepository) {
+    public MediaResource(UserRepository userRepository, MediaRepository mediaRepository) {
+        this.userRepository = userRepository;
         this.mediaRepository = mediaRepository;
     }
 
@@ -52,6 +58,15 @@ public class MediaResource {
         if (media.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            media.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(media.getUser() == null) {
+            throw new BadRequestAlertException("Media must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         Media result = mediaRepository.save(media);
         return ResponseEntity.created(new URI("/api/media/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class MediaResource {
         if (media.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            media.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(media.getUser() == null) {
+            throw new BadRequestAlertException("Media must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         Media result = mediaRepository.save(media);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, media.getId().toString()))
@@ -87,8 +111,13 @@ public class MediaResource {
      */
     @GetMapping("/media")
     public List<Media> getAllMedia(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get all Media");
-        return mediaRepository.findAllWithEagerRelationships();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all Media");
+            return mediaRepository.findAllWithEagerRelationships();
+        } else {
+            log.debug("REST request to get all Media by current user");
+            return mediaRepository.findByUserIsCurrentUserWithEagerRelationships();
+        }
     }
 
     /**
@@ -99,9 +128,13 @@ public class MediaResource {
      */
     @GetMapping("/media/{id}")
     public ResponseEntity<Media> getMedia(@PathVariable Long id) {
-        log.debug("REST request to get Media : {}", id);
-        Optional<Media> media = mediaRepository.findOneWithEagerRelationships(id);
-        return ResponseUtil.wrapOrNotFound(media);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get Media : {}", id);
+            return ResponseUtil.wrapOrNotFound(mediaRepository.findOneWithEagerRelationships(id));
+        } else {
+            log.debug("REST request to get Media : {}", id);
+            return ResponseUtil.wrapOrNotFound(mediaRepository.findOneByUserIsCurrentUserAndIdWithEagerRelationships(id));
+        }
     }
 
     /**
@@ -112,8 +145,19 @@ public class MediaResource {
      */
     @DeleteMapping("/media/{id}")
     public ResponseEntity<Void> deleteMedia(@PathVariable Long id) {
-        log.debug("REST request to delete Media : {}", id);
-        mediaRepository.deleteById(id);
+        
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete Media : {}", id);
+            mediaRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete Media for current user : {}", id);
+            Optional<Media> findById = mediaRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    mediaRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

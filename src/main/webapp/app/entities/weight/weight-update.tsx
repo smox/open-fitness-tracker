@@ -15,6 +15,8 @@ import { ICompletedSet } from 'app/shared/model/completed-set.model';
 import { getEntities as getCompletedSets } from 'app/entities/completed-set/completed-set.reducer';
 import { IUnit } from 'app/shared/model/unit.model';
 import { getEntities as getUnits } from 'app/entities/unit/unit.reducer';
+import { IUser } from 'app/shared/model/user.model';
+import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './weight.reducer';
 import { IWeight } from 'app/shared/model/weight.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
@@ -27,9 +29,10 @@ export const WeightUpdate = (props: IWeightUpdateProps) => {
   const [protocolledWeightId, setProtocolledWeightId] = useState('0');
   const [completedSetId, setCompletedSetId] = useState('0');
   const [unitsId, setUnitsId] = useState('0');
+  const [userId, setUserId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { weightEntity, targetWeights, protocolledWeights, completedSets, units, loading, updating } = props;
+  const { weightEntity, targetWeights, protocolledWeights, completedSets, units, users, loading, updating } = props;
 
   const handleClose = () => {
     props.history.push('/weight');
@@ -46,6 +49,7 @@ export const WeightUpdate = (props: IWeightUpdateProps) => {
     props.getProtocolledWeights();
     props.getCompletedSets();
     props.getUnits();
+    props.getUsers();
   }, []);
 
   useEffect(() => {
@@ -113,6 +117,21 @@ export const WeightUpdate = (props: IWeightUpdateProps) => {
                     : null}
                 </AvInput>
               </AvGroup>
+              <AvGroup>
+                <Label for="weight-user">
+                  <Translate contentKey="openfitnesstrackerApp.weight.user">User</Translate>
+                </Label>
+                <AvInput id="weight-user" type="select" className="form-control" name="user.id">
+                  <option value="" key="0" />
+                  {users
+                    ? users.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.login}
+                        </option>
+                      ))
+                    : null}
+                </AvInput>
+              </AvGroup>
               <Button tag={Link} id="cancel-save" to="/weight" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -139,6 +158,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   protocolledWeights: storeState.protocolledWeight.entities,
   completedSets: storeState.completedSet.entities,
   units: storeState.unit.entities,
+  users: storeState.userManagement.users,
   weightEntity: storeState.weight.entity,
   loading: storeState.weight.loading,
   updating: storeState.weight.updating,
@@ -150,6 +170,7 @@ const mapDispatchToProps = {
   getProtocolledWeights,
   getCompletedSets,
   getUnits,
+  getUsers,
   getEntity,
   updateEntity,
   createEntity,

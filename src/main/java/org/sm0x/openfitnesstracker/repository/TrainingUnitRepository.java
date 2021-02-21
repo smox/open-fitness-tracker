@@ -27,6 +27,12 @@ public interface TrainingUnitRepository extends JpaRepository<TrainingUnit, Long
     @Query("select distinct trainingUnit from TrainingUnit trainingUnit left join fetch trainingUnit.workouts")
     List<TrainingUnit> findAllWithEagerRelationships();
 
+    @Query("select distinct trainingUnit from TrainingUnit trainingUnit left join fetch trainingUnit.workouts where trainingUnit.user.login = ?#{principal.username}")
+    List<TrainingUnit> findByUserIsCurrentUserWithEagerRelationships();
+
     @Query("select trainingUnit from TrainingUnit trainingUnit left join fetch trainingUnit.workouts where trainingUnit.id =:id")
     Optional<TrainingUnit> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select trainingUnit from TrainingUnit trainingUnit left join fetch trainingUnit.workouts where trainingUnit.user.login = ?#{principal.username} and trainingUnit.id = ?1")
+    Optional<TrainingUnit> findOneByUserIsCurrentUserAndIdWithEagerRelationships(Long id);
 }

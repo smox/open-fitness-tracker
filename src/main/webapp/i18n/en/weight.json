@@ -3,11 +3,11 @@
     "weight": {
       "home": {
         "title": "Weights",
-        "createLabel": "Create a new weight",
-        "createOrEditLabel": "Create or edit a weight",
-        "notFound": "No weights found"
+        "createLabel": "Create a new Weight",
+        "createOrEditLabel": "Create or edit a Weight",
+        "notFound": "No Weights found"
       },
-      "created": "New weight created!",
+      "created": "A new Weight is created with identifier {{ param }}",
       "updated": "A Weight is updated with identifier {{ param }}",
       "deleted": "A Weight is deleted with identifier {{ param }}",
       "delete": {
@@ -20,7 +20,8 @@
       "targetWeight": "Target Weight",
       "protocolledWeight": "Protocolled Weight",
       "completedSet": "Completed Set",
-      "units": "Units"
+      "units": "Units",
+      "user": "User"
     }
   }
 }

@@ -29,4 +29,13 @@ public interface MediaRepository extends JpaRepository<Media, Long> {
 
     @Query("select media from Media media left join fetch media.trainingUnits left join fetch media.workouts where media.id =:id")
     Optional<Media> findOneWithEagerRelationships(@Param("id") Long id);
+
+    @Query("select media from Media media where media.user.login = ?#{principal.username} and media.id = ?1")
+    Optional<Media> findByUserIsCurrentUserAndId(Long id);
+
+    @Query("select distinct media from Media media left join fetch media.trainingUnits left join fetch media.workouts where media.user.login = ?#{principal.username} ")
+	List<Media> findByUserIsCurrentUserWithEagerRelationships();
+
+    @Query("select media from Media media left join fetch media.trainingUnits left join fetch media.workouts where media.id =:id and media.user.login = ?#{principal.username}")
+	Optional<Media> findOneByUserIsCurrentUserAndIdWithEagerRelationships(@Param("id") Long id);
 }

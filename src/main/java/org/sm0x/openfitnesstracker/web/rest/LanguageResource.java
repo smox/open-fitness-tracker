@@ -2,6 +2,8 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.Language;
 import org.sm0x.openfitnesstracker.repository.LanguageRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -52,6 +54,11 @@ public class LanguageResource {
         if (language.getId() != null) {
             throw new BadRequestAlertException("A new language cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to create a language", ENTITY_NAME, "notadmin");          
+        }
+
         Language result = languageRepository.save(language);
         return ResponseEntity.created(new URI("/api/languages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +80,11 @@ public class LanguageResource {
         if (language.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to change a language", ENTITY_NAME, "notadmin");          
+        }
+
         Language result = languageRepository.save(language);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, language.getId().toString()))
@@ -111,6 +123,11 @@ public class LanguageResource {
      */
     @DeleteMapping("/languages/{id}")
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            throw new BadRequestAlertException("Only an administrator is allowed to delete a language", ENTITY_NAME, "notadmin");          
+        }
+
         log.debug("REST request to delete Language : {}", id);
         languageRepository.deleteById(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
