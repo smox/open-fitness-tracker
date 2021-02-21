@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data  repository for the ProtocolledWeight entity.
@@ -16,4 +17,7 @@ public interface ProtocolledWeightRepository extends JpaRepository<ProtocolledWe
 
     @Query("select protocolledWeight from ProtocolledWeight protocolledWeight where protocolledWeight.user.login = ?#{principal.username}")
     List<ProtocolledWeight> findByUserIsCurrentUser();
+
+    @Query("select protocolledWeight from ProtocolledWeight protocolledWeight where protocolledWeight.user.login = ?#{principal.username} and protocolledWeight.id = ?1")
+    Optional<ProtocolledWeight> findByUserIsCurrentUserAndId(Long id);
 }

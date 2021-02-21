@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.CompletedSet;
 import org.sm0x.openfitnesstracker.repository.CompletedSetRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class CompletedSetResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final CompletedSetRepository completedSetRepository;
 
-    public CompletedSetResource(CompletedSetRepository completedSetRepository) {
+    public CompletedSetResource(UserRepository userRepository, CompletedSetRepository completedSetRepository) {
+        this.userRepository = userRepository;
         this.completedSetRepository = completedSetRepository;
     }
 
@@ -52,6 +58,15 @@ public class CompletedSetResource {
         if (completedSet.getId() != null) {
             throw new BadRequestAlertException("A new completedSet cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            completedSet.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(completedSet.getUser() == null) {
+            throw new BadRequestAlertException("CompletedSet must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         CompletedSet result = completedSetRepository.save(completedSet);
         return ResponseEntity.created(new URI("/api/completed-sets/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class CompletedSetResource {
         if (completedSet.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            completedSet.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(completedSet.getUser() == null) {
+            throw new BadRequestAlertException("CompletedSet must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         CompletedSet result = completedSetRepository.save(completedSet);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, completedSet.getId().toString()))
@@ -86,8 +110,13 @@ public class CompletedSetResource {
      */
     @GetMapping("/completed-sets")
     public List<CompletedSet> getAllCompletedSets() {
-        log.debug("REST request to get all CompletedSets");
-        return completedSetRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all CompletedSets");
+            return completedSetRepository.findAll();
+        } else {
+            log.debug("REST request to get all CompletedSets by current user");
+            return completedSetRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +127,13 @@ public class CompletedSetResource {
      */
     @GetMapping("/completed-sets/{id}")
     public ResponseEntity<CompletedSet> getCompletedSet(@PathVariable Long id) {
-        log.debug("REST request to get CompletedSet : {}", id);
-        Optional<CompletedSet> completedSet = completedSetRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(completedSet);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get CompletedSet : {}", id);
+            return ResponseUtil.wrapOrNotFound(completedSetRepository.findById(id));
+        } else {
+            log.debug("REST request to get CompletedSet : {}", id);
+            return ResponseUtil.wrapOrNotFound(completedSetRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +144,19 @@ public class CompletedSetResource {
      */
     @DeleteMapping("/completed-sets/{id}")
     public ResponseEntity<Void> deleteCompletedSet(@PathVariable Long id) {
-        log.debug("REST request to delete CompletedSet : {}", id);
-        completedSetRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete CompletedSet : {}", id);
+            completedSetRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete Weight for current user : {}", id);
+            Optional<CompletedSet> findById = completedSetRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    completedSetRepository.deleteById(findById.get().getId());
+            }
+        }
+        
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

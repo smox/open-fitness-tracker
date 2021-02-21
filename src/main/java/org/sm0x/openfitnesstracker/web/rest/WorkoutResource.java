@@ -1,7 +1,10 @@
 package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.Workout;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
 import org.sm0x.openfitnesstracker.repository.WorkoutRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class WorkoutResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final WorkoutRepository workoutRepository;
 
-    public WorkoutResource(WorkoutRepository workoutRepository) {
+    public WorkoutResource(UserRepository userRepository, WorkoutRepository workoutRepository) {
+        this.userRepository = userRepository;
         this.workoutRepository = workoutRepository;
     }
 
@@ -52,6 +58,15 @@ public class WorkoutResource {
         if (workout.getId() != null) {
             throw new BadRequestAlertException("A new workout cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            workout.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(workout.getUser() == null) {
+            throw new BadRequestAlertException("Workout must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         Workout result = workoutRepository.save(workout);
         return ResponseEntity.created(new URI("/api/workouts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class WorkoutResource {
         if (workout.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            workout.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(workout.getUser() == null) {
+            throw new BadRequestAlertException("Workout must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         Workout result = workoutRepository.save(workout);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, workout.getId().toString()))
@@ -86,8 +110,14 @@ public class WorkoutResource {
      */
     @GetMapping("/workouts")
     public List<Workout> getAllWorkouts() {
-        log.debug("REST request to get all Workouts");
-        return workoutRepository.findAll();
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all Workout");
+            return workoutRepository.findAll();
+        } else {
+            log.debug("REST request to get all Workout by current user");
+            return workoutRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +128,13 @@ public class WorkoutResource {
      */
     @GetMapping("/workouts/{id}")
     public ResponseEntity<Workout> getWorkout(@PathVariable Long id) {
-        log.debug("REST request to get Workout : {}", id);
-        Optional<Workout> workout = workoutRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(workout);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get Workout : {}", id);
+            return ResponseUtil.wrapOrNotFound(workoutRepository.findById(id));
+        } else {
+            log.debug("REST request to get Workout : {}", id);
+            return ResponseUtil.wrapOrNotFound(workoutRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +145,19 @@ public class WorkoutResource {
      */
     @DeleteMapping("/workouts/{id}")
     public ResponseEntity<Void> deleteWorkout(@PathVariable Long id) {
-        log.debug("REST request to delete Workout : {}", id);
-        workoutRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete Workout : {}", id);
+            workoutRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete Workout for current user : {}", id);
+            Optional<Workout> findById = workoutRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    workoutRepository.deleteById(findById.get().getId());
+            }
+        }
+        
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

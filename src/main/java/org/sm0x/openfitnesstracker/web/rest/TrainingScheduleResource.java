@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.TrainingSchedule;
 import org.sm0x.openfitnesstracker.repository.TrainingScheduleRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class TrainingScheduleResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final TrainingScheduleRepository trainingScheduleRepository;
 
-    public TrainingScheduleResource(TrainingScheduleRepository trainingScheduleRepository) {
+    public TrainingScheduleResource(UserRepository userRepository, TrainingScheduleRepository trainingScheduleRepository) {
+        this.userRepository = userRepository;
         this.trainingScheduleRepository = trainingScheduleRepository;
     }
 
@@ -52,6 +58,15 @@ public class TrainingScheduleResource {
         if (trainingSchedule.getId() != null) {
             throw new BadRequestAlertException("A new trainingSchedule cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            trainingSchedule.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(trainingSchedule.getUser() == null) {
+            throw new BadRequestAlertException("TrainingSchedule must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+        
         TrainingSchedule result = trainingScheduleRepository.save(trainingSchedule);
         return ResponseEntity.created(new URI("/api/training-schedules/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class TrainingScheduleResource {
         if (trainingSchedule.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            trainingSchedule.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(trainingSchedule.getUser() == null) {
+            throw new BadRequestAlertException("TrainingSchedule must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         TrainingSchedule result = trainingScheduleRepository.save(trainingSchedule);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, trainingSchedule.getId().toString()))
@@ -87,8 +111,13 @@ public class TrainingScheduleResource {
      */
     @GetMapping("/training-schedules")
     public List<TrainingSchedule> getAllTrainingSchedules(@RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get all TrainingSchedules");
-        return trainingScheduleRepository.findAllWithEagerRelationships();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all trainingSchedules");
+            return trainingScheduleRepository.findAll();
+        } else {
+            log.debug("REST request to get all trainingSchedules by current user");
+            return trainingScheduleRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -99,9 +128,13 @@ public class TrainingScheduleResource {
      */
     @GetMapping("/training-schedules/{id}")
     public ResponseEntity<TrainingSchedule> getTrainingSchedule(@PathVariable Long id) {
-        log.debug("REST request to get TrainingSchedule : {}", id);
-        Optional<TrainingSchedule> trainingSchedule = trainingScheduleRepository.findOneWithEagerRelationships(id);
-        return ResponseUtil.wrapOrNotFound(trainingSchedule);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get TrainingSchedule : {}", id);
+            return ResponseUtil.wrapOrNotFound(trainingScheduleRepository.findById(id));
+        } else {
+            log.debug("REST request to get TrainingSchedule : {}", id);
+            return ResponseUtil.wrapOrNotFound(trainingScheduleRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -112,8 +145,19 @@ public class TrainingScheduleResource {
      */
     @DeleteMapping("/training-schedules/{id}")
     public ResponseEntity<Void> deleteTrainingSchedule(@PathVariable Long id) {
-        log.debug("REST request to delete TrainingSchedule : {}", id);
-        trainingScheduleRepository.deleteById(id);
+        
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete TrainingSchedule : {}", id);
+            trainingScheduleRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete TrainingSchedule for current user : {}", id);
+            Optional<TrainingSchedule> findById = trainingScheduleRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    trainingScheduleRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

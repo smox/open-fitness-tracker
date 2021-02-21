@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.TargetWeight;
 import org.sm0x.openfitnesstracker.repository.TargetWeightRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class TargetWeightResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final TargetWeightRepository targetWeightRepository;
 
-    public TargetWeightResource(TargetWeightRepository targetWeightRepository) {
+    public TargetWeightResource(UserRepository userRepository, TargetWeightRepository targetWeightRepository) {
+        this.userRepository = userRepository;
         this.targetWeightRepository = targetWeightRepository;
     }
 
@@ -52,6 +58,15 @@ public class TargetWeightResource {
         if (targetWeight.getId() != null) {
             throw new BadRequestAlertException("A new targetWeight cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            targetWeight.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(targetWeight.getUser() == null) {
+            throw new BadRequestAlertException("TargetWeight must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+        
         TargetWeight result = targetWeightRepository.save(targetWeight);
         return ResponseEntity.created(new URI("/api/target-weights/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class TargetWeightResource {
         if (targetWeight.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            targetWeight.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(targetWeight.getUser() == null) {
+            throw new BadRequestAlertException("TargetWeight must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         TargetWeight result = targetWeightRepository.save(targetWeight);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, targetWeight.getId().toString()))
@@ -86,8 +110,13 @@ public class TargetWeightResource {
      */
     @GetMapping("/target-weights")
     public List<TargetWeight> getAllTargetWeights() {
-        log.debug("REST request to get all TargetWeights");
-        return targetWeightRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all TargetWeight");
+            return targetWeightRepository.findAll();
+        } else {
+            log.debug("REST request to get all TargetWeight by current user");
+            return targetWeightRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +127,13 @@ public class TargetWeightResource {
      */
     @GetMapping("/target-weights/{id}")
     public ResponseEntity<TargetWeight> getTargetWeight(@PathVariable Long id) {
-        log.debug("REST request to get TargetWeight : {}", id);
-        Optional<TargetWeight> targetWeight = targetWeightRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(targetWeight);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get TargetWeight : {}", id);
+            return ResponseUtil.wrapOrNotFound(targetWeightRepository.findById(id));
+        } else {
+            log.debug("REST request to get TargetWeight : {}", id);
+            return ResponseUtil.wrapOrNotFound(targetWeightRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +144,19 @@ public class TargetWeightResource {
      */
     @DeleteMapping("/target-weights/{id}")
     public ResponseEntity<Void> deleteTargetWeight(@PathVariable Long id) {
-        log.debug("REST request to delete TargetWeight : {}", id);
-        targetWeightRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete TargetWeight : {}", id);
+            targetWeightRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete TargetWeight for current user : {}", id);
+            Optional<TargetWeight> findById = targetWeightRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    targetWeightRepository.deleteById(findById.get().getId());
+            }
+        }
+
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

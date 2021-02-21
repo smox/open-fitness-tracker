@@ -2,6 +2,9 @@ package org.sm0x.openfitnesstracker.web.rest;
 
 import org.sm0x.openfitnesstracker.domain.CompletedTraining;
 import org.sm0x.openfitnesstracker.repository.CompletedTrainingRepository;
+import org.sm0x.openfitnesstracker.repository.UserRepository;
+import org.sm0x.openfitnesstracker.security.AuthoritiesConstants;
+import org.sm0x.openfitnesstracker.security.SecurityUtils;
 import org.sm0x.openfitnesstracker.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -33,9 +36,12 @@ public class CompletedTrainingResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
+    private final UserRepository userRepository;
+
     private final CompletedTrainingRepository completedTrainingRepository;
 
-    public CompletedTrainingResource(CompletedTrainingRepository completedTrainingRepository) {
+    public CompletedTrainingResource(UserRepository userRepository, CompletedTrainingRepository completedTrainingRepository) {
+        this.userRepository = userRepository;
         this.completedTrainingRepository = completedTrainingRepository;
     }
 
@@ -52,6 +58,15 @@ public class CompletedTrainingResource {
         if (completedTraining.getId() != null) {
             throw new BadRequestAlertException("A new completedTraining cannot already have an ID", ENTITY_NAME, "idexists");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            completedTraining.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(completedTraining.getUser() == null) {
+            throw new BadRequestAlertException("CompletedTraining must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         CompletedTraining result = completedTrainingRepository.save(completedTraining);
         return ResponseEntity.created(new URI("/api/completed-trainings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
@@ -73,6 +88,15 @@ public class CompletedTrainingResource {
         if (completedTraining.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        if(!SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            completedTraining.setUser(SecurityUtils.getCurrentUser(userRepository));            
+        }
+
+        if(completedTraining.getUser() == null) {
+            throw new BadRequestAlertException("CompletedTraining must be assigned to a User", ENTITY_NAME, "userNull");
+        }
+
         CompletedTraining result = completedTrainingRepository.save(completedTraining);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, completedTraining.getId().toString()))
@@ -86,8 +110,13 @@ public class CompletedTrainingResource {
      */
     @GetMapping("/completed-trainings")
     public List<CompletedTraining> getAllCompletedTrainings() {
-        log.debug("REST request to get all CompletedTrainings");
-        return completedTrainingRepository.findAll();
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to get all CompletedTrainings");
+            return completedTrainingRepository.findAll();
+        } else {
+            log.debug("REST request to get all CompletedTrainings by current user");
+            return completedTrainingRepository.findByUserIsCurrentUser();
+        }
     }
 
     /**
@@ -98,9 +127,13 @@ public class CompletedTrainingResource {
      */
     @GetMapping("/completed-trainings/{id}")
     public ResponseEntity<CompletedTraining> getCompletedTraining(@PathVariable Long id) {
-        log.debug("REST request to get CompletedTraining : {}", id);
-        Optional<CompletedTraining> completedTraining = completedTrainingRepository.findById(id);
-        return ResponseUtil.wrapOrNotFound(completedTraining);
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST admin request to get CompletedTraining : {}", id);
+            return ResponseUtil.wrapOrNotFound(completedTrainingRepository.findById(id));
+        } else {
+            log.debug("REST request to get CompletedTraining : {}", id);
+            return ResponseUtil.wrapOrNotFound(completedTrainingRepository.findByUserIsCurrentUserAndId(id));
+        }
     }
 
     /**
@@ -111,8 +144,18 @@ public class CompletedTrainingResource {
      */
     @DeleteMapping("/completed-trainings/{id}")
     public ResponseEntity<Void> deleteCompletedTraining(@PathVariable Long id) {
-        log.debug("REST request to delete CompletedTraining : {}", id);
-        completedTrainingRepository.deleteById(id);
+
+        if(SecurityUtils.isCurrentUserInRole(AuthoritiesConstants.ADMIN)) {
+            log.debug("REST request to delete CompletedTraining : {}", id);
+            completedTrainingRepository.deleteById(id);
+        } else {
+            log.debug("REST request to delete CompletedTraining for current user : {}", id);
+            Optional<CompletedTraining> findById = completedTrainingRepository.findById(id);
+            if(findById.isPresent() && SecurityUtils.getCurrentUserLogin().isPresent() && 
+                findById.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().get())) {
+                    completedTrainingRepository.deleteById(findById.get().getId());
+            }
+        }
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

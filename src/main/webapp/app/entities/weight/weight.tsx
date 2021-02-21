@@ -42,6 +42,9 @@ export const Weight = (props: IWeightProps) => {
                 <th>
                   <Translate contentKey="openfitnesstrackerApp.weight.units">Units</Translate>
                 </th>
+                <th>
+                  <Translate contentKey="openfitnesstrackerApp.weight.user">User</Translate>
+                </th>
                 <th />
               </tr>
             </thead>
@@ -55,6 +58,7 @@ export const Weight = (props: IWeightProps) => {
                   </td>
                   <td>{weight.amount}</td>
                   <td>{weight.units ? <Link to={`unit/${weight.units.id}`}>{weight.units.id}</Link> : ''}</td>
+                  <td>{weight.user ? weight.user.login : ''}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${weight.id}`} color="info" size="sm">

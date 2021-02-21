@@ -7,7 +7,7 @@
         "createOrEditLabel": "Weight erstellen oder bearbeiten",
         "notFound": "No Weights found"
       },
-      "created": "Neues Gewicht eingetragen!",
+      "created": "Weight erstellt mit ID {{ param }}",
       "updated": "Weight aktualisiert mit ID {{ param }}",
       "deleted": "Weight gelöscht mit ID {{ param }}",
       "delete": {
@@ -20,7 +20,8 @@
       "targetWeight": "Target Weight",
       "protocolledWeight": "Protocolled Weight",
       "completedSet": "Completed Set",
-      "units": "Units"
+      "units": "Units",
+      "user": "User"
     }
   }
 }
