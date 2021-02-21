@@ -238,7 +238,7 @@ export const Home = (props: IHomeProp) => {
             </a>
           </p>
           <p>
-            <Translate contentKey="home.feedback">For feedback or if you encounter bugs, please open a issue on </Translate>
+            <Translate contentKey="home.feedback">For feedback or if you encounter bugs, please open an issue on </Translate>
             <a href="https://github.com/smox/open-fitness-tracker/issues" target="_blank" rel="noopener noreferrer">
                 Github
             </a>
