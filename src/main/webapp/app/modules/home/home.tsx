@@ -3,7 +3,7 @@ import './home.scss';
 import React, { useEffect } from 'react';
 import { Translate, translate } from 'react-jhipster';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AvForm, AvGroup, AvField } from 'availity-reactstrap-validation';
 import { Row, Col, Alert, Button, Label } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,11 +25,11 @@ import { ITrainingSchedule } from 'app/shared/model/training-schedule.model';
 import { IWeight } from 'app/shared/model/weight.model';
 import { ITargetWeight } from 'app/shared/model/target-weight.model';
 
-export interface IHomeProp extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
+export interface IHomeProp extends StateProps, DispatchProps {}
 
 export const Home = (props: IHomeProp) => {
 
-  const { account, isAuthenticated, availableUnits, currentUserId, isNewUser, noTrainingScheduleForUser, match } = props;
+  const { account, isAuthenticated, availableUnits, currentUserId, isNewUser, noTrainingScheduleForUser } = props;
   const username = account && account.firstName ? account.firstName : account.login
 
   if(isAuthenticated) {
@@ -216,7 +216,7 @@ export const Home = (props: IHomeProp) => {
                 )
               }
             </Alert>
-            <FloatingAddButton match={match} />
+            <FloatingAddButton />
           </>
           )
           }
