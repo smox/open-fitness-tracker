@@ -4,7 +4,6 @@ import org.sm0x.openfitnesstracker.domain.Weight;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
