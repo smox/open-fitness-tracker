@@ -7,9 +7,7 @@ import { connect } from 'react-redux';
 import { IRootState } from 'app/shared/reducers';
 import { AvForm, AvGroup, AvField } from 'availity-reactstrap-validation';
 import { Row, Col, Button, Label, Table } from 'reactstrap';
-import { IWeight } from 'app/shared/model/weight.model';
 import { IUnit } from 'app/shared/model/unit.model';
-import { IProtocolledWeight } from 'app/shared/model/protocolled-weight.model';
 import { 
     createEntityWithWeightByUser as createProtocolledWeightWithWeightByUser,
     getEntities as getProtocolledWeights,
@@ -17,17 +15,19 @@ import {
 } from 'app/entities/protocolled-weight/protocolled-weight.reducer';
 
 import { getEntities as getUnits } from 'app/entities/unit/unit.reducer';
-import { setChartDimensions, setCrosshair, openDeleteDialog, closeDeleteDialog } from 'app/modules/weight/add/add.reducer';
+import { setChartDimensions, setCrosshair, openDeleteDialog, closeDeleteDialog, setDefaultUnit } from 'app/modules/weight/add/add.reducer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { XYPlot, HorizontalGridLines, VerticalGridLines, XAxis, YAxis, LineMarkSeries, Crosshair } from 'react-vis';
 import ConfirmDialog from 'app/shared/component/dialog/confirm/confirm';
+import { IWeight } from 'app/shared/model/weight.model';
+import { IProtocolledWeight } from 'app/shared/model/protocolled-weight.model';
 
 
 export interface IWeightAddProps extends StateProps, DispatchProps {}
 
 export const WeightAdd = (props: IWeightAddProps) => {
 
-    const { isAuthenticated, availableUnits, currentUserId, crosshairValues,
+    const { isAuthenticated, availableUnits, currentUserId, crosshairValues, defaultValues,
         protocolledWeights, chartHeight, chartWidth, isOpen, protocolledWeightToDel } = props;
 
     /**
@@ -37,23 +37,23 @@ export const WeightAdd = (props: IWeightAddProps) => {
     .sort((protocolledWeight1, protocolledWeight2) => protocolledWeight1.time.localeCompare(protocolledWeight2.time))
     .slice(protocolledWeights.length >= 7 ? protocolledWeights.length - 7 : 0);
 
-
     const valLastWeightDate = (selectedDate) => {
         return Date.parse(new Date().toDateString()) >= (Date.parse(`${selectedDate}`) - (1000*60*60));  
     };
       
     const saveEntity = (event, values) => {
 
+        const selectedUnitId = +values["application-home-init-currentWeightUnit-field"] !== 0 ? 
+            +values["application-home-init-currentWeightUnit-field"] : +defaultValues["application-home-init-currentWeightUnit-field"];
+
         const pWeight: IWeight = {
             amount: +values["application-home-init-currentWeight-field"],
-            units: availableUnits && availableUnits.find((cu: IUnit) => cu.id === +values["application-home-init-currentWeightUnit-field"])
+            units: availableUnits && availableUnits.find((cu: IUnit) => cu.id === selectedUnitId)
         }
 
         const protocolledWeightToAdd: IProtocolledWeight = {
-            user: {
-                id: currentUserId
-            },
-            time: `${values["application-home-init-lastWeighed-date-field"]}T${values["application-home-init-lastWeighed-time-field"]}:00.000Z`,
+            user: { id: currentUserId },
+            time: `${values["application-home-init-lastWeighed-date-field"]}T${values["application-home-init-lastWeighed-time-field"]}:00.000+01:00`,
             weight: pWeight
         }
 
@@ -114,13 +114,19 @@ export const WeightAdd = (props: IWeightAddProps) => {
         }, []);
     }
 
+    useEffect(() => {
+        if(availableUnits && availableUnits.length > 0 && availableUnits[0]) {
+            props.setDefaultUnit(availableUnits[0].id);
+        }
+    }, [availableUnits])
+
     return ( 
     <div className="container-fluid">
         <Row>
             <Col xs="12" xl="6">
                 <Row>
                     <Col xs="12">
-                        <AvForm onValidSubmit={ saveEntity }>
+                        <AvForm onValidSubmit={ saveEntity } model={defaultValues}>
                             <AvGroup id="application-home-init-currentWeight">
                                 <Row>
                                     <Col xs="12" sm="5">
@@ -129,18 +135,18 @@ export const WeightAdd = (props: IWeightAddProps) => {
                                     </Label>
                                     </Col>
                                     <Col xs="12" sm="7">
-                                    <Row>
-                                        <Col xs="6">
-                                        <AvField id="application-home-init-currentWeight-field" 
-                                            name="application-home-init-currentWeight-field" 
-                                            type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
-                                        </Col>
-                                        <Col xs="6">
-                                        <AvField type="select" name="application-home-init-currentWeightUnit-field">
-                                            { availableUnits && availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
-                                        </AvField>
-                                        </Col>
-                                    </Row>
+                                        <Row>
+                                            <Col xs="6">
+                                                <AvField id="application-home-init-currentWeight-field" 
+                                                    name="application-home-init-currentWeight-field" 
+                                                    type="number" min="1" max="999" required errorMessage={translate("home.validation.required")}/>
+                                            </Col>
+                                            <Col xs="6">
+                                                <AvField type="select" name="application-home-init-currentWeightUnit-field">
+                                                    { availableUnits && availableUnits.map((unit: IUnit) => <option key={ unit.id } value={ unit.id }>{ unit.shortName }</option>) }
+                                                </AvField>
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
                             </AvGroup>
@@ -194,7 +200,7 @@ export const WeightAdd = (props: IWeightAddProps) => {
                                 <tbody>
                                 {last7ProtocolledWeights.map((protocolledWeight, i) => (
                                     <tr key={`protocolledWeight-${i}`} onMouseOver={() => props.setCrosshair({ x: new Date(Date.parse(protocolledWeight.time)), y: protocolledWeight.weight.amount })}>
-                                        <td>{new Date(Date.parse(protocolledWeight.time)).toLocaleString()}</td>
+                                        <td>{ new Date(Date.parse(protocolledWeight.time)).toLocaleString() }</td>
                                         <td>{ protocolledWeight.weight.amount.toFixed(1) } {availableUnits && availableUnits.find(pwu => 
                                                 protocolledWeight.weight.units && pwu.id === protocolledWeight.weight.units.id)?.shortName }
                                         </td>
@@ -232,7 +238,7 @@ export const WeightAdd = (props: IWeightAddProps) => {
                             protocolledWeightToDel.weight.units.shortName : ""}` : "" }) }
             isOpen={ isOpen } 
             confirmButtonText={ translate("entity.action.delete") }
-            confirmButtonColor={"danger"}
+            confirmButtonColor={ "danger" }
             handleClose={ props.closeDeleteDialog }
             handleConfirm={ () => { props.deleteProtocolledWeightWithWeight(protocolledWeightToDel); props.closeDeleteDialog() } }
         />
@@ -249,7 +255,8 @@ const mapStateToProps = (storeState: IRootState) => ({
     chartWidth: storeState.weightAdd.chartDimension.width,
     isOpen: storeState.weightAdd.isDeleteDialogOpen,
     protocolledWeightToDel: storeState.weightAdd.protocolledWeight,
-    crosshairValues: storeState.weightAdd.crosshair
+    crosshairValues: storeState.weightAdd.crosshair,
+    defaultValues: storeState.weightAdd.defaultValues
 });
   
 const mapDispatchToProps = {
@@ -260,7 +267,8 @@ const mapDispatchToProps = {
     deleteProtocolledWeightWithWeight,
     openDeleteDialog,
     closeDeleteDialog,
-    setCrosshair
+    setCrosshair,
+    setDefaultUnit
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

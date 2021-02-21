@@ -6,6 +6,7 @@ export const ACTION_TYPES = {
   OPEN_DELETE_DIALOG: 'WeightAdd/OPEN_DELETE_DIALOG',
   CLOSE_DELETE_DIALOG: 'WeightAdd/CLOSE_DELETE_DIALOG',
   SET_CROSSHAIR: 'WeightAdd/SET_CROSSHAIR',
+  SET_DEFAULT_UNIT: 'WeightAdd/SET_DEFAULT_UNIT',
 };
 
 const initialState = {
@@ -17,6 +18,12 @@ const initialState = {
   isDeleteDialogOpen: false,
   protocolledWeight: undefined,
   crosshair: [],
+  defaultValues: {
+    'application-home-init-currentWeight-field': 65,
+    'application-home-init-currentWeightUnit-field': 0,
+    'application-home-init-lastWeighed-date-field': new Date().toISOString().substr(0, 10),
+    'application-home-init-lastWeighed-time-field': '06:30',
+  },
 };
 
 export type WeightAddState = Readonly<typeof initialState>;
@@ -50,6 +57,14 @@ export default (state: WeightAddState = initialState, action): WeightAddState =>
         isDeleteDialogOpen: false,
         protocolledWeight: undefined,
       };
+    case ACTION_TYPES.SET_DEFAULT_UNIT:
+      return {
+        ...state,
+        defaultValues: {
+          ...state.defaultValues,
+          'application-home-init-currentWeightUnit-field': action.id,
+        },
+      };
     default:
       return state;
   }
@@ -73,4 +88,9 @@ export const closeDeleteDialog = () => ({
 export const setCrosshair = (dataPoint: LineMarkSeriesPoint) => ({
   type: ACTION_TYPES.SET_CROSSHAIR,
   dataPoint,
+});
+
+export const setDefaultUnit = (id: number) => ({
+  type: ACTION_TYPES.SET_DEFAULT_UNIT,
+  id,
 });
